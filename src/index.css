@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+
+  /* Nieuwe Adem - Minimalist Palette */
+  --color-bg-base: #F5F5F5; /* Zand/Lichtgrijs */
+  --color-powder-blue: #B0C4DE; /* Poederblauw */
+  --color-soft-lavender: #E6E6FA; /* Zacht Lavendel */
+  --color-text-dark: #4A4A4A; /* Donkergrijs voor leesbaarheid */
+  --color-text-light: #7A7A7A; /* Secundaire tekst */
+
+  /* Toegevoegde Kleuren */
+  --color-forest-green: #1A5C38;
+  --color-leaf-green: #4CAF50;
+  --color-ocean-blue: #3498DB;
+  --color-charcoal: #424242;
+}
+
+body {
+  background-color: var(--color-bg-base);
+  color: var(--color-text-dark);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+}
