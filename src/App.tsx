@@ -221,7 +221,7 @@ const About = () => {
           </h3>
           <div className="space-y-6 text-text-dark/80 font-light text-lg leading-relaxed">
             <p>
-              Ik ben Martin, mijn eigen reis met ademwerk begon vanuit een zoektocht naar een betere balans tussen mijn werk en privéleven. Pas toen ik zelf een verbonden ademhalingssessie ontving, ervaarde ik de werkelijke kracht en helende potentie van de adem. Die ervaring was zo’n eye-opener dat ik besloot dit zelf door te gaan geven. Via het Ruach Ademcentrum heb ik mijn opleiding gevolgd.
+              Ik ben Martin, mijn eigen reis met ademwerk begon vanuit een zoektocht naar een betere balans tussen mijn werk en privéleven. Pas toen ik zelf een verbonden ademhalingssessie ontving, ervaarde ik de werkelijke kracht en helende potentie van de adem. Die ervaring was zo’n eye-opener dat ik besloot dit zelf door te gaan geven en heb vervolgens bij het Ruach Ademcentrum mijn opleiding behaald.
             </p>
             <p>
               Naast mijn werk als gecertificeerd ademcoach ben ik werkzaam als Persoonlijk Begeleider in de gehandicaptenzorg. Het begeleiden van mensen zit in mijn natuur; ik ben geduldig, rustig en empathisch. In mijn sessies creëer ik een veilige bedding waarin ik werk met zachtheid, lichte aanraking, drukpunten, geluid en energie.
@@ -235,13 +235,18 @@ const About = () => {
 
 const Aanbod = () => {
   return (
-    <section id="methode" className="py-32 bg-white">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
+    <section 
+      id="methode" 
+      className="py-32 relative bg-cover bg-center bg-fixed"
+      style={{ backgroundImage: "url('https://i.ibb.co/wH3d65h/bos-water2.png')" }}
+    >
+      <div className="absolute inset-0 bg-white/50 backdrop-blur-[3px]"></div>
+      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-24">
           <h2 className="text-4xl md:text-5xl font-medium text-powder-blue mb-8 drop-shadow-sm tracking-tight">
             Aanbod & Tarieven
           </h2>
-          <p className="text-lg text-text-dark/80 font-light leading-relaxed">
+          <p className="text-lg text-white font-light leading-relaxed drop-shadow-md">
             Kies de sessie die het beste bij jou past. Of je nu een eerste stap wilt zetten of klaar bent voor een dieper traject, ik begeleid je graag op jouw pad naar meer rust en ruimte.
           </p>
         </div>
@@ -383,9 +388,9 @@ const Benefits = () => {
                   desc: "De techniek verlaagt de drempel naar het onderbewustzijn, waardoor u bewuster wordt van lichamelijke sensaties en opgeslagen emoties. Dit vergroot het zelfbewustzijn en leert u te luisteren naar de subtiele signalen van uw lichaam. Deze versterkte verbinding met uw eigen kern helpt om meer te vertrouwen op uw innerlijk weten en intuïtie."
                 }
               ].map((benefit, i) => (
-                <div key={i} className="flex gap-6 group">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-soft-lavender flex items-center justify-center mt-1 group-hover:bg-ocean-blue transition-colors duration-300">
-                    <div className="w-3 h-3 bg-white rounded-full"></div>
+                <div key={i} className="flex gap-6 group p-6 rounded-[2rem] border border-transparent hover:border-soft-lavender/50 hover:bg-white hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-leaf-green flex items-center justify-center mt-1 group-hover:bg-leaf-green/90 transition-colors duration-300">
+                    <Wind size={24} className="text-white" />
                   </div>
                   <div>
                     <h3 className="text-2xl font-medium text-text-dark mb-3">{benefit.title}</h3>
@@ -403,8 +408,13 @@ const Benefits = () => {
 
 const Agenda = () => {
   return (
-    <section id="agenda" className="py-24 bg-white relative overflow-hidden">
-      <div className="max-w-5xl mx-auto px-6 md:px-12">
+    <section 
+      id="agenda" 
+      className="py-24 relative bg-cover bg-center bg-fixed overflow-hidden"
+      style={{ backgroundImage: "url('https://i.ibb.co/nqK6kSR2/lucid-origin-professional-photo-of-image-profile-source-style-cinematic-golden-hour-lifestyle-0.jpg')" }}
+    >
+      <div className="absolute inset-0 bg-white/50 backdrop-blur-[3px]"></div>
+      <div className="max-w-5xl mx-auto px-6 md:px-12 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -412,10 +422,10 @@ const Agenda = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-12"
         >
-          <h2 className="text-4xl md:text-5xl font-medium text-powder-blue mb-6 drop-shadow-sm tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-medium text-white mb-6 drop-shadow-md tracking-tight">
             Agenda
           </h2>
-          <p className="text-lg md:text-xl text-text-dark/80 font-light max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-white/90 font-light max-w-2xl mx-auto drop-shadow-sm">
             Bekijk hier de geplande sessies, ademcirkels en evenementen.
           </p>
         </motion.div>
@@ -477,11 +487,16 @@ const FAQ = () => {
   ];
 
   return (
-    <section id="faq" className="py-32 bg-white">
-      <div className="max-w-3xl mx-auto px-6 md:px-12">
+    <section 
+      id="faq" 
+      className="py-32 relative bg-cover bg-center bg-fixed"
+      style={{ backgroundImage: "url('https://i.ibb.co/q30C34k0/melanen1.jpg')" }}
+    >
+      <div className="absolute inset-0 bg-white/50 backdrop-blur-[3px]"></div>
+      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-medium text-powder-blue mb-6 drop-shadow-sm tracking-tight">Veelgestelde Vragen</h2>
-          <p className="text-lg text-text-dark/70 font-light">Alles wat je moet weten voor je eerste sessie.</p>
+          <h2 className="text-4xl md:text-5xl font-medium text-white mb-6 drop-shadow-md tracking-tight">Veelgestelde Vragen</h2>
+          <p className="text-lg text-white/90 font-light drop-shadow-sm">Alles wat je moet weten voor je eerste sessie.</p>
         </div>
 
         <div className="space-y-6">
@@ -526,24 +541,24 @@ const FAQ = () => {
 
 const CTA = () => {
   return (
-    <section id="contact" className="py-32 bg-bg-base relative">
-      <div className="max-w-5xl mx-auto px-6 md:px-12">
-        <div className="bg-soft-lavender/30 rounded-[3rem] p-16 md:p-24 text-center relative overflow-hidden border border-soft-lavender/60">
-          {/* Decorative circles */}
-          <div className="absolute top-0 left-0 w-64 h-64 bg-white rounded-full mix-blend-overlay filter blur-3xl opacity-60 -translate-x-1/2 -translate-y-1/2"></div>
-          <div className="absolute bottom-0 right-0 w-64 h-64 bg-powder-blue rounded-full mix-blend-overlay filter blur-3xl opacity-30 translate-x-1/2 translate-y-1/2"></div>
-          
-          <div className="relative z-10">
-            <h2 className="text-4xl md:text-6xl font-medium text-powder-blue mb-16 drop-shadow-sm tracking-tight">
-              Klaar om je adem in beweging te zetten?
-            </h2>
+    <section 
+      id="contact" 
+      className="py-32 relative bg-cover bg-center bg-fixed"
+      style={{ backgroundImage: "url('https://i.ibb.co/27xfkZ5M/2.jpg')" }}
+    >
+      <div className="absolute inset-0 bg-white/50 backdrop-blur-[3px]"></div>
+      <div className="max-w-5xl mx-auto px-6 md:px-12 relative z-10">
+        <div className="text-center relative z-10">
+          <h2 className="text-4xl md:text-6xl font-medium text-white mb-16 drop-shadow-md tracking-tight">
+            Klaar om je adem in beweging te zetten?
+          </h2>
 
-            <div id="contact-form" className="max-w-xl mx-auto scroll-mt-24">
-              <form 
-                action="https://formsubmit.co/4259591ae232cefb5024f14d196935cf"
-                method="POST"
-                className="bg-white/40 backdrop-blur-md p-8 md:p-10 rounded-[2rem] border border-white/60 shadow-sm text-left"
-                onSubmit={(e) => {
+          <div id="contact-form" className="max-w-xl mx-auto scroll-mt-24">
+            <form 
+              action="https://formsubmit.co/4259591ae232cefb5024f14d196935cf"
+              method="POST"
+              className="bg-white/60 backdrop-blur-md p-8 md:p-10 rounded-[2rem] border border-white/60 shadow-xl text-left"
+              onSubmit={(e) => {
                   e.preventDefault();
                   const form = e.currentTarget;
                   const formData = new FormData(form);
@@ -618,10 +633,9 @@ const CTA = () => {
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  );
-};
+      </section>
+    );
+  };
 
 const Footer = () => {
   return (
