@@ -671,7 +671,7 @@ const Footer = () => {
           <h4 className="font-medium mb-6 text-powder-blue tracking-wide">Contact</h4>
           <ul className="space-y-4 text-white/70 font-light">
             <li>Bergen op Zoom, Nederland</li>
-            <li>martin.nieuweadem@gmail.com</li>
+            <li><a href="#contact" className="hover:text-powder-blue transition-colors">Stuur een bericht via het formulier</a></li>
           </ul>
         </div>
       </div>
