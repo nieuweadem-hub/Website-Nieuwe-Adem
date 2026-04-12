@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info } from 'lucide-react';
+import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle } from 'lucide-react';
 
 // --- Components ---
 
@@ -27,7 +27,7 @@ const Navbar = () => {
   return (
     <nav
       className={`fixed w-full z-50 transition-all duration-500 ${
-        isScrolled ? 'bg-powder-blue/90 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-8'
+        isScrolled ? 'bg-white/80 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-8'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
@@ -54,9 +54,7 @@ const Navbar = () => {
             <a
               key={link.name}
               href={link.href}
-              className={`text-sm font-medium tracking-wide transition-colors ${
-                isScrolled ? 'text-white/90 hover:text-white' : 'text-text-dark/80 hover:text-powder-blue'
-              }`}
+              className={`text-sm font-medium tracking-wide transition-colors text-text-dark/80 hover:text-powder-blue`}
             >
               {link.name}
             </a>
@@ -75,7 +73,7 @@ const Navbar = () => {
 
         {/* Mobile Toggle */}
         <button
-          className={`md:hidden ${isScrolled ? 'text-white' : 'text-powder-blue'}`}
+          className="md:hidden text-powder-blue"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
@@ -540,12 +538,48 @@ const FAQ = () => {
 };
 
 const CTA = () => {
+  const [toast, setToast] = useState<{ show: boolean; message: string; type: 'success' | 'error' }>({
+    show: false,
+    message: '',
+    type: 'success'
+  });
+
+  const showToast = (message: string, type: 'success' | 'error') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast(prev => ({ ...prev, show: false }));
+    }, 5000);
+  };
+
   return (
     <section 
       id="contact" 
       className="py-32 relative bg-cover bg-center bg-fixed"
       style={{ backgroundImage: "url('https://i.ibb.co/27xfkZ5M/2.jpg')" }}
     >
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast.show && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            className={`fixed bottom-8 right-8 z-50 px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 ${
+              toast.type === 'success' ? 'bg-white text-leaf-green border border-leaf-green/20' : 'bg-white text-red-500 border border-red-500/20'
+            }`}
+          >
+            {toast.type === 'success' ? <CheckCircle2 size={24} /> : <XCircle size={24} />}
+            <span className="font-medium text-text-dark">{toast.message}</span>
+            <button 
+              onClick={() => setToast(prev => ({ ...prev, show: false }))}
+              className="ml-4 text-text-dark/40 hover:text-text-dark transition-colors"
+            >
+              <X size={18} />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="absolute inset-0 bg-white/50 backdrop-blur-[3px]"></div>
       <div className="max-w-5xl mx-auto px-6 md:px-12 relative z-10">
         <div className="text-center relative z-10">
@@ -572,14 +606,14 @@ const CTA = () => {
                   })
                   .then(response => {
                     if (response.ok) {
-                      alert('Bedankt voor je bericht! We nemen zo snel mogelijk contact met je op.');
+                      showToast('Bedankt voor je bericht! We nemen zo snel mogelijk contact met je op.', 'success');
                       form.reset();
                     } else {
-                      alert('Er is iets misgegaan. Probeer het later opnieuw.');
+                      showToast('Er is iets misgegaan. Probeer het later opnieuw.', 'error');
                     }
                   })
                   .catch(error => {
-                    alert('Er is iets misgegaan. Probeer het later opnieuw.');
+                    showToast('Er is iets misgegaan. Probeer het later opnieuw.', 'error');
                   });
                 }}
               >
