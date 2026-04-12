@@ -459,7 +459,8 @@ const parseICS = (icsData: string): CalendarEvent[] => {
       } else if (key.startsWith('DTEND')) {
         currentEvent.end = parseICSDate(value);
       } else if (key === 'DESCRIPTION') {
-        currentEvent.description = value.replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\n/g, '\n');
+        const decoded = value.replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\n/g, '\n');
+        currentEvent.description = decoded.replace(/<[^>]*>?/gm, '');
       } else if (key === 'LOCATION') {
         currentEvent.location = value.replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\n/g, '\n');
       } else if (key === 'UID') {
@@ -480,10 +481,19 @@ const Agenda = () => {
     const fetchEvents = async () => {
       try {
         const icsUrl = 'https://calendar.google.com/calendar/ical/martin.nieuweadem%40gmail.com/public/basic.ics';
-        // Use allorigins to bypass CORS
-        const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(icsUrl)}`);
-        if (!response.ok) throw new Error('Failed to fetch calendar');
-        const data = await response.text();
+        
+        let data = '';
+        try {
+          // Primary proxy
+          const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(icsUrl)}`);
+          if (!response.ok) throw new Error('Primary proxy failed');
+          data = await response.text();
+        } catch (e) {
+          // Fallback proxy
+          const fallbackResponse = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(icsUrl)}`);
+          if (!fallbackResponse.ok) throw new Error('Fallback proxy failed');
+          data = await fallbackResponse.text();
+        }
         
         const parsedEvents = parseICS(data);
         // Filter out past events
@@ -590,19 +600,6 @@ const Agenda = () => {
                         {event.description}
                       </p>
                     )}
-                  </div>
-                  
-                  <div className="flex-shrink-0 w-full md:w-auto mt-4 md:mt-0">
-                    <a 
-                      href="#contact-form"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
-                      }}
-                      className="block w-full text-center px-6 py-3 bg-powder-blue/10 text-powder-blue font-medium rounded-xl hover:bg-powder-blue hover:text-white transition-colors"
-                    >
-                      Aanmelden
-                    </a>
                   </div>
                 </motion.div>
               ))}
