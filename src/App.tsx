@@ -203,7 +203,7 @@ const About = () => {
         <div className="w-full md:w-1/2">
           <div className="relative rounded-[2rem] overflow-hidden aspect-[4/5] shadow-xl border border-soft-lavender/30">
             <img 
-              src="https://i.ibb.co/d4c0KzSZ/Martin1.png" 
+              src="https://i.ibb.co/ZpffcrHB/Martin1.png" 
               alt="Martin - Ademcoach" 
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
