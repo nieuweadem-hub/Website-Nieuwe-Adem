@@ -619,7 +619,7 @@ const CTA = () => {
                     name="message"
                     rows={4}
                     className="w-full px-5 py-4 rounded-2xl border border-soft-lavender/50 bg-white/70 focus:outline-none focus:ring-2 focus:ring-powder-blue/40 focus:border-powder-blue transition-all resize-none placeholder:text-text-dark/30"
-                    placeholder="Waar wil je het over hebben?"
+                    placeholder="Voor meer informatie of het plannen van een ademsessie..."
                     required
                   ></textarea>
                 </div>
