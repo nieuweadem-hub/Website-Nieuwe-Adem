@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle } from 'lucide-react';
+import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle, Calendar } from 'lucide-react';
 
 // --- Components ---
 
@@ -404,7 +404,105 @@ const Benefits = () => {
   );
 };
 
+interface CalendarEvent {
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
+  description?: string;
+  location?: string;
+}
+
+const parseICSDate = (dateStr: string): Date => {
+  const year = parseInt(dateStr.substring(0, 4));
+  const month = parseInt(dateStr.substring(4, 6)) - 1;
+  const day = parseInt(dateStr.substring(6, 8));
+  
+  if (dateStr.length > 8) {
+    const hour = parseInt(dateStr.substring(9, 11));
+    const minute = parseInt(dateStr.substring(11, 13));
+    const second = parseInt(dateStr.substring(13, 15));
+    if (dateStr.endsWith('Z')) {
+      return new Date(Date.UTC(year, month, day, hour, minute, second));
+    }
+    return new Date(year, month, day, hour, minute, second);
+  }
+  
+  return new Date(year, month, day);
+};
+
+const parseICS = (icsData: string): CalendarEvent[] => {
+  const events: CalendarEvent[] = [];
+  const unfoldedData = icsData.replace(/\r?\n[ \t]/g, '');
+  const lines = unfoldedData.split(/\r?\n/);
+  
+  let currentEvent: Partial<CalendarEvent> | null = null;
+  
+  for (const line of lines) {
+    if (line.startsWith('BEGIN:VEVENT')) {
+      currentEvent = {};
+    } else if (line.startsWith('END:VEVENT')) {
+      if (currentEvent && currentEvent.start && currentEvent.title) {
+        events.push(currentEvent as CalendarEvent);
+      }
+      currentEvent = null;
+    } else if (currentEvent) {
+      const colonIdx = line.indexOf(':');
+      if (colonIdx === -1) continue;
+      const key = line.substring(0, colonIdx);
+      const value = line.substring(colonIdx + 1);
+      
+      if (key === 'SUMMARY') {
+        currentEvent.title = value.replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\n/g, '\n');
+      } else if (key.startsWith('DTSTART')) {
+        currentEvent.start = parseICSDate(value);
+      } else if (key.startsWith('DTEND')) {
+        currentEvent.end = parseICSDate(value);
+      } else if (key === 'DESCRIPTION') {
+        currentEvent.description = value.replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\n/g, '\n');
+      } else if (key === 'LOCATION') {
+        currentEvent.location = value.replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\n/g, '\n');
+      } else if (key === 'UID') {
+        currentEvent.id = value;
+      }
+    }
+  }
+  
+  return events.sort((a, b) => a.start.getTime() - b.start.getTime());
+};
+
 const Agenda = () => {
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const icsUrl = 'https://calendar.google.com/calendar/ical/martin.nieuweadem%40gmail.com/public/basic.ics';
+        // Use allorigins to bypass CORS
+        const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(icsUrl)}`);
+        if (!response.ok) throw new Error('Failed to fetch calendar');
+        const data = await response.text();
+        
+        const parsedEvents = parseICS(data);
+        // Filter out past events
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        const upcomingEvents = parsedEvents.filter(e => e.start >= now).slice(0, 5); // Show next 5 events
+        
+        setEvents(upcomingEvents);
+      } catch (err) {
+        console.error('Error fetching calendar:', err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
   return (
     <section 
       id="agenda" 
@@ -433,17 +531,83 @@ const Agenda = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="relative rounded-[2rem] overflow-hidden shadow-lg bg-white border border-soft-lavender/50"
+          className="relative max-w-3xl mx-auto"
         >
-          <iframe 
-            src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FAmsterdam&showPrint=0&showTitle=0&title=Nieuwe%20Adem&showTabs=0&showCalendars=0&showTz=0&mode=AGENDA&src=bWNkZXZyb2VkdEBnbWFpbC5jb20&src=bmwuZHV0Y2gjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%23d50000" 
-            style={{ border: 0 }} 
-            width="100%" 
-            height="600" 
-            frameBorder="0" 
-            scrolling="no"
-            title="Nieuwe Adem Agenda"
-          ></iframe>
+          {loading ? (
+            <div className="bg-white/80 backdrop-blur-md rounded-[2rem] p-12 text-center shadow-xl border border-white/60">
+              <div className="animate-spin w-10 h-10 border-4 border-powder-blue border-t-transparent rounded-full mx-auto mb-4"></div>
+              <p className="text-text-dark/70 font-medium">Agenda laden...</p>
+            </div>
+          ) : error ? (
+            <div className="bg-white/80 backdrop-blur-md rounded-[2rem] p-12 text-center shadow-xl border border-white/60">
+              <Calendar className="w-12 h-12 text-powder-blue mx-auto mb-4 opacity-50" />
+              <p className="text-text-dark/70 font-medium">Er konden momenteel geen afspraken worden geladen.</p>
+              <p className="text-sm text-text-dark/50 mt-2">Neem contact op voor de actuele beschikbaarheid.</p>
+            </div>
+          ) : events.length === 0 ? (
+            <div className="bg-white/80 backdrop-blur-md rounded-[2rem] p-12 text-center shadow-xl border border-white/60">
+              <Calendar className="w-12 h-12 text-powder-blue mx-auto mb-4 opacity-50" />
+              <p className="text-text-dark/70 font-medium">Er staan momenteel geen openbare sessies gepland.</p>
+              <p className="text-sm text-text-dark/50 mt-2">Neem contact op voor meer informatie of het boeken van een ademsessie.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {events.map((event, index) => (
+                <motion.div 
+                  key={event.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-white/60 flex flex-col md:flex-row gap-6 items-start md:items-center hover:shadow-xl transition-all"
+                >
+                  <div className="flex-shrink-0 bg-powder-blue/10 text-powder-blue rounded-xl p-4 text-center min-w-[100px]">
+                    <span className="block text-sm font-bold uppercase tracking-wider">
+                      {event.start.toLocaleDateString('nl-NL', { month: 'short' })}
+                    </span>
+                    <span className="block text-3xl font-light">
+                      {event.start.getDate()}
+                    </span>
+                  </div>
+                  
+                  <div className="flex-grow">
+                    <h3 className="text-xl font-medium text-text-dark mb-2">{event.title}</h3>
+                    <div className="flex flex-wrap gap-4 text-sm text-text-dark/60">
+                      <div className="flex items-center gap-1.5">
+                        <Clock size={16} className="text-leaf-green" />
+                        <span>
+                          {event.start.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })} - {event.end.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                      {event.location && (
+                        <div className="flex items-center gap-1.5">
+                          <MapPin size={16} className="text-leaf-green" />
+                          <span>{event.location}</span>
+                        </div>
+                      )}
+                    </div>
+                    {event.description && (
+                      <p className="mt-3 text-sm text-text-dark/70 line-clamp-2">
+                        {event.description}
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div className="flex-shrink-0 w-full md:w-auto mt-4 md:mt-0">
+                    <a 
+                      href="#contact-form"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      className="block w-full text-center px-6 py-3 bg-powder-blue/10 text-powder-blue font-medium rounded-xl hover:bg-powder-blue hover:text-white transition-colors"
+                    >
+                      Aanmelden
+                    </a>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </motion.div>
       </div>
     </section>
