@@ -482,17 +482,34 @@ const Agenda = () => {
       try {
         const icsUrl = 'https://calendar.google.com/calendar/ical/martin.nieuweadem%40gmail.com/public/basic.ics';
         
+        const proxies = [
+          `https://api.allorigins.win/raw?url=${encodeURIComponent(icsUrl)}`,
+          `https://corsproxy.io/?${encodeURIComponent(icsUrl)}`,
+          `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(icsUrl)}`
+        ];
+
         let data = '';
-        try {
-          // Primary proxy
-          const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(icsUrl)}`);
-          if (!response.ok) throw new Error('Primary proxy failed');
-          data = await response.text();
-        } catch (e) {
-          // Fallback proxy
-          const fallbackResponse = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(icsUrl)}`);
-          if (!fallbackResponse.ok) throw new Error('Fallback proxy failed');
-          data = await fallbackResponse.text();
+        let success = false;
+
+        for (const proxy of proxies) {
+          try {
+            const response = await fetch(proxy);
+            if (response.ok) {
+              const text = await response.text();
+              // Verify it's actually an ICS file and not an HTML error page
+              if (text.includes('BEGIN:VCALENDAR')) {
+                data = text;
+                success = true;
+                break;
+              }
+            }
+          } catch (e) {
+            console.warn(`Proxy failed: ${proxy}`);
+          }
+        }
+
+        if (!success) {
+          throw new Error('All proxies failed to fetch the calendar');
         }
         
         const parsedEvents = parseICS(data);
