@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle, Calendar } from 'lucide-react';
+import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle, Calendar, Instagram } from 'lucide-react';
 
 // --- Components ---
 
@@ -851,6 +851,17 @@ const Footer = () => {
           <p className="text-white/70 font-light max-w-sm leading-relaxed">
             Begeleiding naar diepe innerlijke rust en transformatie door de kracht van bewust ademen.
           </p>
+          <div className="mt-8">
+            <a 
+              href="https://www.instagram.com/martinnieuweadem/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white hover:opacity-80 transition-opacity shadow-lg"
+              aria-label="Volg mij op Instagram"
+            >
+              <Instagram size={20} />
+            </a>
+          </div>
         </div>
         <div>
           <h4 className="font-medium mb-6 text-powder-blue tracking-wide">Navigatie</h4>
