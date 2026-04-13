@@ -856,10 +856,15 @@ const Footer = () => {
               href="https://www.instagram.com/martinnieuweadem/" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white hover:opacity-80 transition-opacity shadow-lg"
+              className="inline-flex items-center gap-3 group"
               aria-label="Volg mij op Instagram"
             >
-              <Instagram size={20} />
+              <span className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white shadow-lg group-hover:scale-105 transition-transform">
+                <Instagram size={20} />
+              </span>
+              <span className="text-white/80 font-medium group-hover:text-white transition-colors">
+                Volg mij via Instagram
+              </span>
             </a>
           </div>
         </div>
