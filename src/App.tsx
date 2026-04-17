@@ -472,6 +472,28 @@ const parseICS = (icsData: string): CalendarEvent[] => {
   return events.sort((a, b) => a.start.getTime() - b.start.getTime());
 };
 
+const renderTextWithLinks = (text: string) => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+  return parts.map((part, i) => {
+    if (part.match(urlRegex)) {
+      return (
+        <a 
+          key={i} 
+          href={part} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-ocean-blue hover:text-powder-blue underline transition-colors"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {part}
+        </a>
+      );
+    }
+    return <span key={i}>{part}</span>;
+  });
+};
+
 const Agenda = () => {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -614,7 +636,7 @@ const Agenda = () => {
                     </div>
                     {event.description && (
                       <p className="mt-3 text-sm text-text-dark/70 line-clamp-2">
-                        {event.description}
+                        {renderTextWithLinks(event.description)}
                       </p>
                     )}
                   </div>
