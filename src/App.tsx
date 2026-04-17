@@ -305,7 +305,7 @@ const Aanbod = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ delay: i * 0.2, duration: 0.6 }}
-              className={`relative bg-bg-base p-10 rounded-[2rem] border ${item.popular ? 'border-leaf-green shadow-lg' : 'border-transparent hover:border-soft-lavender hover:bg-soft-lavender/10'} transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-powder-blue/20 flex flex-col h-full text-center`}
+              className={`relative bg-bg-base p-10 rounded-[2rem] border ${item.popular ? 'border-leaf-green shadow-lg' : 'border-transparent'} hover:border-soft-lavender hover:bg-soft-lavender/10 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-powder-blue/20 flex flex-col h-full text-center`}
             >
               {item.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-leaf-green text-white px-4 py-1 rounded-full text-sm font-medium tracking-wide">
@@ -726,7 +726,7 @@ const CTA = () => {
     setToast({ show: true, message, type });
     setTimeout(() => {
       setToast(prev => ({ ...prev, show: false }));
-    }, 5000);
+    }, 10000);
   };
 
   return (
@@ -784,7 +784,7 @@ const CTA = () => {
                   })
                   .then(response => {
                     if (response.ok) {
-                      showToast('Bedankt voor je bericht! We nemen zo snel mogelijk contact met je op.', 'success');
+                      showToast('Bedankt voor je bericht! Ik neem zo spoedig mogelijk contact met u op.', 'success');
                       form.reset();
                     } else {
                       showToast('Er is iets misgegaan. Probeer het later opnieuw.', 'error');
