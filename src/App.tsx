@@ -245,7 +245,7 @@ const Aanbod = () => {
             Aanbod & Tarieven
           </h2>
           <p className="text-lg text-white font-light leading-relaxed drop-shadow-md">
-            Kies de sessie die het beste bij jou past. Of je nu een eerste stap wilt zetten of klaar bent voor een dieper traject, ik begeleid je graag op jouw pad naar meer rust en ruimte.
+            Kies de sessie die bij je past of vraag naar andere mogelijkheden. Of je nu een eerste stap wilt zetten of klaar bent voor een dieper traject, ik begeleid je graag op jouw pad naar meer rust en ruimte.
           </p>
         </div>
 
