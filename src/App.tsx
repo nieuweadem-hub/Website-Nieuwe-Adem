@@ -505,28 +505,62 @@ const Agenda = () => {
         const icsUrl = 'https://calendar.google.com/calendar/ical/martin.nieuweadem%40gmail.com/public/basic.ics';
         
         const proxies = [
-          `https://api.allorigins.win/raw?url=${encodeURIComponent(icsUrl)}`,
-          `https://corsproxy.io/?${encodeURIComponent(icsUrl)}`,
-          `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(icsUrl)}`
+          // allorigins /get endpoint returns JSON which is more robust against cors stripping
+          {
+            url: `https://api.allorigins.win/get?url=${encodeURIComponent(icsUrl)}`,
+            isJson: true
+          },
+          // codetabs needs the trailing slash after proxy/
+          {
+            url: `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(icsUrl)}`,
+            isJson: false
+          }
         ];
 
         let data = '';
         let success = false;
 
+        // Fetch with a 6-second timeout so the site doesn't hang if a proxy is unresponsive
+        const fetchWithTimeout = async (url: string, timeout = 6000) => {
+          const controller = new AbortController();
+          const id = setTimeout(() => controller.abort(), timeout);
+          try {
+            const response = await fetch(url, { signal: controller.signal });
+            clearTimeout(id);
+            return response;
+          } catch (error) {
+            clearTimeout(id);
+            throw error;
+          }
+        };
+
         for (const proxy of proxies) {
           try {
-            const response = await fetch(proxy);
+            const response = await fetchWithTimeout(proxy.url);
             if (response.ok) {
               const text = await response.text();
-              // Verify it's actually an ICS file and not an HTML error page
-              if (text.includes('BEGIN:VCALENDAR')) {
-                data = text;
-                success = true;
-                break;
+              
+              if (proxy.isJson) {
+                try {
+                  const json = JSON.parse(text);
+                  if (json.contents && json.contents.includes('BEGIN:VCALENDAR')) {
+                    data = json.contents;
+                    success = true;
+                    break;
+                  }
+                } catch (jsonError) {
+                  // Ignore JSON parse errors and continue to next proxy
+                }
+              } else {
+                if (text.includes('BEGIN:VCALENDAR')) {
+                  data = text;
+                  success = true;
+                  break;
+                }
               }
             }
           } catch (e) {
-            console.warn(`Proxy failed: ${proxy}`);
+            console.warn(`Proxy failed: ${proxy.url}`);
           }
         }
 

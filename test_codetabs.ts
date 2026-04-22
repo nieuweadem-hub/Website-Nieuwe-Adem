@@ -1,7 +1,7 @@
 import https from 'https';
 
 const icsUrl = 'https://calendar.google.com/calendar/ical/martin.nieuweadem%40gmail.com/public/basic.ics';
-const url = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(icsUrl)}`;
+const url = `https://cors.eu.org/${icsUrl}`;
 
 https.get(url, (res) => {
   let data = '';
