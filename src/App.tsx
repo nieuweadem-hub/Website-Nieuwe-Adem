@@ -505,12 +505,10 @@ const Agenda = () => {
         const icsUrl = 'https://calendar.google.com/calendar/ical/martin.nieuweadem%40gmail.com/public/basic.ics';
         
         const proxies = [
-          // allorigins /get endpoint returns JSON which is more robust against cors stripping
           {
             url: `https://api.allorigins.win/get?url=${encodeURIComponent(icsUrl)}`,
             isJson: true
           },
-          // codetabs needs the trailing slash after proxy/
           {
             url: `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(icsUrl)}`,
             isJson: false
@@ -520,7 +518,6 @@ const Agenda = () => {
         let data = '';
         let success = false;
 
-        // Fetch with a 6-second timeout so the site doesn't hang if a proxy is unresponsive
         const fetchWithTimeout = async (url: string, timeout = 6000) => {
           const controller = new AbortController();
           const id = setTimeout(() => controller.abort(), timeout);
@@ -549,7 +546,7 @@ const Agenda = () => {
                     break;
                   }
                 } catch (jsonError) {
-                  // Ignore JSON parse errors and continue to next proxy
+                  // Ignore JSON parse errors
                 }
               } else {
                 if (text.includes('BEGIN:VCALENDAR')) {
@@ -569,10 +566,9 @@ const Agenda = () => {
         }
         
         const parsedEvents = parseICS(data);
-        // Filter out past events
         const now = new Date();
         now.setHours(0, 0, 0, 0);
-        const upcomingEvents = parsedEvents.filter(e => e.start >= now).slice(0, 5); // Show next 5 events
+        const upcomingEvents = parsedEvents.filter(e => e.start >= now).slice(0, 6);
         
         setEvents(upcomingEvents);
       } catch (err) {
@@ -589,96 +585,109 @@ const Agenda = () => {
   return (
     <section 
       id="agenda" 
-      className="py-24 relative bg-cover bg-center bg-fixed overflow-hidden"
+      className="py-32 relative bg-cover bg-center bg-fixed"
       style={{ backgroundImage: "url('https://i.ibb.co/nqK6kSR2/lucid-origin-professional-photo-of-image-profile-source-style-cinematic-golden-hour-lifestyle-0.jpg')" }}
     >
-      <div className="absolute inset-0 bg-white/50 backdrop-blur-[3px]"></div>
-      <div className="max-w-5xl mx-auto px-6 md:px-12 relative z-10">
+      <div className="absolute inset-0 bg-white/60 backdrop-blur-sm"></div>
+      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-12"
+          className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-medium text-white mb-6 drop-shadow-md tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-medium text-powder-blue mb-6 drop-shadow-sm tracking-tight">
             Agenda
           </h2>
-          <p className="text-lg md:text-xl text-white/90 font-light max-w-2xl mx-auto drop-shadow-sm">
-            Bekijk hier de geplande sessies, ademcirkels en evenementen.
+          <p className="text-lg md:text-xl text-text-dark/80 font-light max-w-2xl mx-auto">
+            Bekijk de planning voor aankomende ademcirkels en evenementen.
           </p>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="relative max-w-3xl mx-auto"
-        >
+        <div className="relative max-w-5xl mx-auto">
           {loading ? (
-            <div className="bg-white/80 backdrop-blur-md rounded-[2rem] p-12 text-center shadow-xl border border-white/60">
-              <div className="animate-spin w-10 h-10 border-4 border-powder-blue border-t-transparent rounded-full mx-auto mb-4"></div>
-              <p className="text-text-dark/70 font-medium">Agenda laden...</p>
+            <div className="bg-white/80 backdrop-blur-md rounded-[2rem] p-12 text-center shadow-sm border border-white">
+              <div className="animate-spin w-10 h-10 border-4 border-leaf-green border-t-transparent rounded-full mx-auto mb-4"></div>
+              <p className="text-text-dark/70 font-medium tracking-wide">Agenda laden...</p>
             </div>
           ) : error ? (
-            <div className="bg-white/80 backdrop-blur-md rounded-[2rem] p-12 text-center shadow-xl border border-white/60">
-              <Calendar className="w-12 h-12 text-powder-blue mx-auto mb-4 opacity-50" />
-              <p className="text-text-dark/70 font-medium">Er konden momenteel geen afspraken worden geladen.</p>
-              <p className="text-sm text-text-dark/50 mt-2">Neem contact op voor de actuele beschikbaarheid.</p>
+            <div className="bg-white/80 backdrop-blur-md rounded-[2rem] p-16 text-center shadow-sm border border-white">
+              <Calendar className="w-16 h-16 text-leaf-green mx-auto mb-6 opacity-80" />
+              <p className="text-xl text-text-dark font-medium mb-3">Er konden momenteel geen afspraken worden geladen.</p>
+              <p className="text-lg text-text-dark/60 font-light">
+                (Soms blokkeren ad-blockers het inladen van de kalender data). Neem direct contact op voor de actuele beschikbaarheid.
+              </p>
+              <a 
+                href="#contact-form"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="inline-block mt-8 px-8 py-3 bg-leaf-green text-white rounded-full font-medium shadow-sm hover:bg-leaf-green/90 transition-colors"
+              >
+                Neem contact op
+              </a>
             </div>
           ) : events.length === 0 ? (
-            <div className="bg-white/80 backdrop-blur-md rounded-[2rem] p-12 text-center shadow-xl border border-white/60">
-              <Calendar className="w-12 h-12 text-powder-blue mx-auto mb-4 opacity-50" />
-              <p className="text-text-dark/70 font-medium">Er staan momenteel geen openbare sessies gepland.</p>
-              <p className="text-sm text-text-dark/50 mt-2">Neem contact op voor meer informatie of het boeken van een ademsessie.</p>
+            <div className="bg-white/80 backdrop-blur-md rounded-[2rem] p-16 text-center shadow-sm border border-white">
+              <Calendar className="w-16 h-16 text-leaf-green mx-auto mb-6 opacity-80" />
+              <p className="text-xl text-text-dark font-medium mb-3">Er staan momenteel geen openbare groepsessies gepland.</p>
+              <p className="text-lg text-text-dark/60 font-light">
+                Mocht je interesse hebben in een 1-op-1 sessie of zelf een groep vormen, neem dan contact op!
+              </p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {events.map((event, index) => (
                 <motion.div 
                   key={event.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-white/60 flex flex-col md:flex-row gap-6 items-start md:items-center hover:shadow-xl transition-all"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, duration: 0.6 }}
+                  className="group bg-white/95 backdrop-blur-md rounded-[2rem] p-8 shadow-sm hover:shadow-xl border border-soft-lavender/40 hover:border-powder-blue/40 transition-all duration-300 hover:-translate-y-1 flex gap-6"
                 >
-                  <div className="flex-shrink-0 bg-powder-blue/10 text-powder-blue rounded-xl p-4 text-center min-w-[100px]">
-                    <span className="block text-sm font-bold uppercase tracking-wider">
+                  <div className="flex-shrink-0 bg-soft-lavender/30 text-ocean-blue rounded-2xl w-24 h-24 flex flex-col items-center justify-center p-2 group-hover:bg-powder-blue group-hover:text-white transition-colors duration-300 shadow-sm">
+                    <span className="block text-sm font-bold uppercase tracking-widest mb-1">
                       {event.start.toLocaleDateString('nl-NL', { month: 'short' })}
                     </span>
-                    <span className="block text-3xl font-light">
+                    <span className="block text-4xl font-light leading-none">
                       {event.start.getDate()}
                     </span>
                   </div>
                   
-                  <div className="flex-grow">
-                    <h3 className="text-xl font-medium text-text-dark mb-2">{event.title}</h3>
-                    <div className="flex flex-wrap gap-4 text-sm text-text-dark/60">
-                      <div className="flex items-center gap-1.5">
-                        <Clock size={16} className="text-leaf-green" />
-                        <span>
-                          {event.start.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })} - {event.end.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                      </div>
-                      {event.location && (
-                        <div className="flex items-center gap-1.5">
-                          <MapPin size={16} className="text-leaf-green" />
-                          <span>{event.location}</span>
+                  <div className="flex-grow flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-xl font-medium text-text-dark mb-4 leading-tight group-hover:text-ocean-blue transition-colors">{event.title}</h3>
+                      <div className="flex flex-col gap-2.5 text-sm md:text-base text-text-dark/70 font-light">
+                        <div className="flex items-center gap-3">
+                          <Clock size={18} className="text-leaf-green flex-shrink-0" />
+                          <span>
+                            {event.start.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })} - {event.end.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
+                          </span>
                         </div>
-                      )}
+                        {event.location && (
+                          <div className="flex flex-start gap-3">
+                            <MapPin size={18} className="text-leaf-green flex-shrink-0 mt-0.5" />
+                            <span className="leading-snug">{event.location}</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     {event.description && (
-                      <p className="mt-3 text-sm text-text-dark/70 line-clamp-2">
-                        {renderTextWithLinks(event.description)}
-                      </p>
+                      <div className="mt-5 pt-5 border-t border-soft-lavender/30">
+                        <p className="text-sm text-text-dark/60 line-clamp-3 leading-relaxed">
+                          {renderTextWithLinks(event.description)}
+                        </p>
+                      </div>
                     )}
                   </div>
                 </motion.div>
               ))}
             </div>
           )}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
