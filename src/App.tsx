@@ -219,7 +219,7 @@ const About = () => {
           </h3>
           <div className="space-y-6 text-text-dark/80 font-light text-lg leading-relaxed">
             <p>
-              Ik ben Martin, mijn eigen reis met ademwerk begon vanuit een zoektocht naar een betere balans tussen mijn werk en privéleven. Pas toen ik zelf een verbonden ademhalingssessie ontving, ervaarde ik de werkelijke kracht en helende potentie van de adem. Die ervaring was zo’n eye-opener dat ik besloot dit zelf door te gaan geven en heb vervolgens bij het Ruach Ademcentrum mijn opleiding behaald.
+              Ik ben Martin, mijn eigen reis met ademwerk begon vanuit een zoektocht naar een betere balans tussen mijn werk en privéleven. Pas toen ik zelf een verbonden ademhalingssessie ontving, ervaarde ik de werkelijke kracht en helende potentie van de adem. Die ervaring was zo’n eye-opener dat ik besloot deze kennis zelf door te gaan geven. Inmiddels heb ik mijn opleiding bij het Ruach Ademcentrum afgerond.
             </p>
             <p>
               Naast mijn werk als gecertificeerd ademcoach ben ik werkzaam als Persoonlijk Begeleider in de gehandicaptenzorg. Het begeleiden van mensen zit in mijn natuur; ik ben geduldig, rustig en empathisch. In mijn sessies creëer ik een veilige bedding waarin ik werk met zachtheid, lichte aanraking, drukpunten, geluid en energie.
