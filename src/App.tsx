@@ -219,7 +219,7 @@ const About = () => {
           </h3>
           <div className="space-y-6 text-text-dark/80 font-light text-lg leading-relaxed">
             <p>
-              Ik ben Martin, mijn eigen reis met ademwerk begon vanuit een zoektocht naar een betere balans tussen mijn werk en privéleven. Pas toen ik zelf een verbonden ademhalingssessie ontving, ervaarde ik de werkelijke kracht en helende potentie van de adem. Die ervaring was zo’n eye-opener dat ik besloot deze kennis zelf door te gaan geven. Inmiddels heb ik mijn opleiding bij het Ruach Ademcentrum afgerond.
+              Ik ben Martin, mijn eigen reis met ademwerk begon vanuit een zoektocht naar een betere balans tussen mijn werk en privéleven. Pas toen ik zelf een verbonden ademhalingssessie ontving, ervaarde ik de werkelijke kracht en helende potentie van de adem. Die ervaring was zo’n eye-opener dat ik besloot het eigen te maken en nadat ik mijn opleiding bij het Ruach ademcentrum had afgerond, deze kennis door gaan geven.
             </p>
             <p>
               Naast mijn werk als gecertificeerd ademcoach ben ik werkzaam als Persoonlijk Begeleider in de gehandicaptenzorg. Het begeleiden van mensen zit in mijn natuur; ik ben geduldig, rustig en empathisch. In mijn sessies creëer ik een veilige bedding waarin ik werk met zachtheid, lichte aanraking, drukpunten, geluid en energie.
@@ -232,6 +232,8 @@ const About = () => {
 };
 
 const Aanbod = () => {
+  const [isGiftOpen, setIsGiftOpen] = useState(false);
+
   return (
     <section 
       id="methode" 
@@ -240,10 +242,49 @@ const Aanbod = () => {
     >
       <div className="absolute inset-0 bg-white/50 backdrop-blur-[3px]"></div>
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-24">
+        
+        <div className="text-center max-w-3xl mx-auto mb-16 relative">
           <h2 className="text-4xl md:text-5xl font-medium text-powder-blue mb-8 drop-shadow-sm tracking-tight">
             Aanbod & Tarieven
           </h2>
+
+          <div className="relative z-40 flex flex-col items-center justify-center my-8">
+            <AnimatePresence>
+              {isGiftOpen && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.8, y: 10 }}
+                  className="bg-white p-5 rounded-2xl shadow-2xl border border-powder-blue/20 max-w-[280px] md:max-w-xs mb-4 relative z-50 text-left"
+                >
+                  <button 
+                    onClick={() => setIsGiftOpen(false)}
+                    className="absolute top-2 right-2 text-text-dark/40 hover:text-text-dark"
+                  >
+                    <X size={16} />
+                  </button>
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl mt-1">📱</span>
+                    <p className="text-sm font-medium text-text-dark/80 leading-relaxed pr-2">
+                      Iedere deelnemer ontvangt gratis een 'Adem App' met daarop extra ademtechnieken om thuis ook zelf te beoefenen.
+                    </p>
+                  </div>
+                  {/* Pointer arrow */}
+                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white transform rotate-45 border-b border-r border-powder-blue/20"></div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <motion.button
+              animate={!isGiftOpen ? { y: [0, -12, 0] } : {}}
+              transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+              onClick={() => setIsGiftOpen(!isGiftOpen)}
+              className="text-6xl md:text-7xl drop-shadow-2xl hover:scale-110 transition-transform transform origin-bottom focus:outline-none"
+              title="Klik voor een kado!"
+            >
+              {isGiftOpen ? '🎉' : '🎁'}
+            </motion.button>
+          </div>
+
           <p className="text-lg text-white font-light leading-relaxed drop-shadow-md">
             Kies de sessie die bij je past of vraag naar andere mogelijkheden. Of je nu een eerste stap wilt zetten of klaar bent voor een dieper traject, ik begeleid je graag op jouw pad naar meer rust en ruimte.
           </p>
