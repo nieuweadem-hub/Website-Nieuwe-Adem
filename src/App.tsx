@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle, Calendar, Instagram } from 'lucide-react';
+import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle, Calendar, Instagram, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 
 // --- Components ---
 
@@ -222,7 +222,7 @@ const About = () => {
               Ik ben Martin, mijn eigen reis met ademwerk begon vanuit een zoektocht naar een betere balans tussen mijn werk en privéleven. Pas toen ik zelf een verbonden ademhalingssessie ontving, ervaarde ik de werkelijke kracht en helende potentie van de adem. Die ervaring was zo’n eye-opener dat ik besloot het eigen te maken en nadat ik mijn opleiding bij het Ruach ademcentrum had afgerond, deze kennis door gaan geven.
             </p>
             <p>
-              Naast mijn werk als gecertificeerd ademcoach ben ik werkzaam als Persoonlijk Begeleider in de gehandicaptenzorg. Het begeleiden van mensen zit in mijn natuur; ik ben geduldig, rustig en empathisch. In mijn sessies creëer ik een veilige bedding waarin ik werk met zachtheid, lichte aanraking, drukpunten, geluid en energie.
+              Naast mijn werk als gecertificeerd ademcoach ben ik werkzaam als Persoonlijk Begeleider in de gehandicaptenzorg. Het begeleiden van mensen zit in mijn natuur; ik ben geduldig, rustig en empathisch. Tijdens mijn ademsessies creëer ik een veilige bedding waarin ik werk met zachtheid, lichte aanraking, drukpunten, muziek, geluid en energie.
             </p>
           </div>
         </div>
@@ -392,6 +392,23 @@ const Aanbod = () => {
 };
 
 const Benefits = () => {
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+
+  const testimonials = [
+    { name: "Sander V.", text: "De sessie bij Martin was een openbaring. De onrust in mijn hoofd die ik al jaren voelde, was na één keer ademen een stuk minder. Hij stelt je enorm op je gemak." },
+    { name: "Lisa", text: "Door de ademcirkel ben ik weer in contact gekomen met mijn lichaam. Martin begeleidt het proces heel professioneel en liefdevol. Absolute aanrader voor iedereen met een druk leven." },
+    { name: "Thomas", text: "Ik kwam binnen met veel opgebouwde werkstress. Door de verbonden ademhaling kwam er zoveel los, gevolgd door een diepe rust die ik in geen tijden had ervaren." },
+    { name: "Anoniem", text: "Een hele veilige en warme bedding om met jezelf aan de slag te gaan. De inzichten die ik kreeg tijdens de rustfase waren ongelooflijk waardevol voor mijn herstel." }
+  ];
+
+  const nextTestimonial = () => {
+    setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+  };
+
+  const prevTestimonial = () => {
+    setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  };
+
   return (
     <section id="resultaten" className="py-32 bg-bg-base relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
@@ -437,6 +454,72 @@ const Benefits = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          </motion.div>
+
+          {/* Testimonials Carousel */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mt-32"
+          >
+            <div className="text-center mb-10">
+              <h3 className="text-2xl font-medium text-powder-blue mb-2">Ervaringen van anderen</h3>
+              <div className="w-16 h-1 bg-leaf-green/50 mx-auto rounded-full"></div>
+            </div>
+
+            <div className="relative bg-white rounded-[2rem] p-8 md:p-12 shadow-xl border border-soft-lavender/30 flex flex-col items-center min-h-[300px] justify-center">
+              <Quote className="text-powder-blue/20 w-16 h-16 absolute top-6 left-6" />
+              
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentTestimonial}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.4 }}
+                  className="text-center relative z-10 px-4 md:px-12"
+                >
+                  <p className="text-lg md:text-xl text-text-dark/80 font-light italic leading-relaxed mb-8">
+                    "{testimonials[currentTestimonial].text}"
+                  </p>
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-soft-lavender/40 flex items-center justify-center text-powder-blue font-bold">
+                      {testimonials[currentTestimonial].name.charAt(0)}
+                    </div>
+                    <p className="font-semibold text-text-dark tracking-wide">{testimonials[currentTestimonial].name}</p>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Controls */}
+              <div className="absolute top-1/2 -translate-y-1/2 w-full flex justify-between px-4 md:px-6 left-0 pointer-events-none">
+                <button 
+                  onClick={prevTestimonial}
+                  className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-md flex items-center justify-center text-powder-blue hover:text-leaf-green hover:shadow-lg transition-all border border-soft-lavender/20 pointer-events-auto transform -translate-x-1/2 md:translate-x-0"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+                <button 
+                  onClick={nextTestimonial}
+                  className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-md flex items-center justify-center text-powder-blue hover:text-leaf-green hover:shadow-lg transition-all border border-soft-lavender/20 pointer-events-auto transform translate-x-1/2 md:translate-x-0"
+                >
+                  <ChevronRight size={24} />
+                </button>
+              </div>
+
+              {/* Dots */}
+              <div className="flex gap-2 mt-8 z-10">
+                {testimonials.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentTestimonial(idx)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === currentTestimonial ? 'bg-leaf-green w-6' : 'bg-soft-lavender'}`}
+                  />
+                ))}
+              </div>
             </div>
           </motion.div>
         </div>
