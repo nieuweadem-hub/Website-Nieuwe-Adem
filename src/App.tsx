@@ -17,6 +17,7 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
+    { name: 'Herken jij jezelf?', href: '#reality-journey' },
     { name: 'Wat brengt het jou?', href: '#resultaten' },
     { name: 'Aanbod', href: '#methode' },
     { name: 'Agenda', href: '#agenda' },
@@ -151,28 +152,6 @@ const Hero = () => {
             <p className="text-lg md:text-xl text-text-dark/80 mb-10 leading-relaxed font-light max-w-lg">
               In een wereld die nooit uitstaat, is je ademhaling de directe weg terug naar jezelf. Het is de snelste manier om je zenuwstelsel te kalmeren: door je adempatroon te optimaliseren, geef je je lichaam het signaal dat het veilig is. Wetenschappelijk onderbouwd, fysiek voelbaar. Spanning maakt plaats voor ruimte, en energie gaat weer stromen.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <a 
-                href="#contact-form" 
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="px-8 py-4 bg-leaf-green text-white rounded-full font-medium hover:bg-leaf-green/90 transition-colors shadow-sm text-center"
-              >
-                Plan een kennismaking
-              </a>
-              <a 
-                href="#methode" 
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('methode')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="px-8 py-4 bg-white text-leaf-green border border-leaf-green/30 rounded-full font-medium hover:bg-soft-lavender/20 transition-colors shadow-sm text-center"
-              >
-                Bekijk mijn aanbod
-              </a>
-            </div>
           </motion.div>
 
         <motion.div
@@ -211,9 +190,11 @@ const About = () => {
           </div>
         </div>
         <div className="w-full md:w-1/2">
-          <h2 className="text-4xl md:text-5xl font-medium text-powder-blue mb-4 drop-shadow-sm tracking-tight">
-            Over <span className="font-light">Martin</span>
-          </h2>
+          <div className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-white/60 border border-powder-blue/40 shadow-lg shadow-powder-blue/10 backdrop-blur-md mb-6">
+            <h2 className="text-powder-blue font-bold tracking-widest uppercase text-xl md:text-3xl drop-shadow-sm text-center">
+              Over <span className="font-light">Martin</span>
+            </h2>
+          </div>
           <h3 className="text-xl md:text-2xl text-powder-blue/80 font-medium mb-8">
             Geef je adem de ruimte, geef jezelf rust.
           </h3>
@@ -244,9 +225,11 @@ const Aanbod = () => {
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
         
         <div className="text-center max-w-3xl mx-auto mb-16 relative">
-          <h2 className="text-4xl md:text-5xl font-medium text-powder-blue mb-8 drop-shadow-sm tracking-tight">
-            Aanbod & Tarieven
-          </h2>
+          <div className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-white/60 border border-powder-blue/40 shadow-lg shadow-powder-blue/10 backdrop-blur-md mb-8">
+            <h2 className="text-powder-blue font-bold tracking-widest uppercase text-xl md:text-3xl drop-shadow-sm text-center">
+              Aanbod & Tarieven
+            </h2>
+          </div>
 
           <div className="relative z-40 flex flex-col items-center justify-center my-8">
             <AnimatePresence>
@@ -420,12 +403,14 @@ const Benefits = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="bg-white/70 backdrop-blur-md p-8 md:p-10 rounded-3xl shadow-xl border border-white/50 mb-16 mx-auto max-w-3xl text-center flex flex-col items-center justify-center"
+            className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-medium text-powder-blue mb-4 drop-shadow-sm tracking-tight text-center">
-              Wat brengt het jou?
-            </h2>
-            <p className="text-xl md:text-2xl text-text-dark font-semibold text-center mt-2">
+            <div className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-white/60 border border-powder-blue/40 shadow-lg shadow-powder-blue/10 backdrop-blur-md mb-6">
+              <h2 className="text-powder-blue font-bold tracking-widest uppercase text-xl md:text-3xl drop-shadow-sm text-center">
+                Wat brengt het jou?
+              </h2>
+            </div>
+            <p className="text-xl md:text-2xl text-text-dark font-semibold mt-2">
               De kracht van verbonden ademhaling
             </p>
           </motion.div>
@@ -476,8 +461,9 @@ const Benefits = () => {
           className="mt-16 w-full"
         >
           <div className="text-center mb-16">
-            <h3 className="text-3xl md:text-4xl font-medium text-text-dark mb-4 drop-shadow-sm tracking-tight">Ervaringen van anderen</h3>
-            <div className="w-16 h-1 bg-[#4285F4] mx-auto rounded-full mb-6"></div>
+            <div className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-white/60 border border-powder-blue/40 shadow-lg shadow-powder-blue/10 backdrop-blur-md mb-6">
+              <h3 className="text-powder-blue font-bold tracking-widest uppercase text-xl md:text-3xl drop-shadow-sm text-center">Ervaringen van anderen</h3>
+            </div>
             <div className="flex items-center justify-center gap-2 text-text-dark/80 text-lg">
               <span className="font-semibold">Uitstekend</span>
               <div className="flex text-[#FFC107] text-xl">
@@ -760,12 +746,14 @@ const Agenda = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="bg-white/70 backdrop-blur-md p-8 md:p-10 rounded-[2rem] shadow-xl border border-white/50 mb-16 mx-auto max-w-3xl text-center flex flex-col items-center justify-center"
+          className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-medium text-powder-blue mb-6 drop-shadow-sm tracking-tight text-center">
-            Agenda
-          </h2>
-          <p className="text-lg md:text-xl text-text-dark/80 font-light max-w-2xl mx-auto text-center mt-2">
+          <div className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-white/60 border border-powder-blue/40 shadow-lg shadow-powder-blue/10 backdrop-blur-md mb-6">
+            <h2 className="text-powder-blue font-bold tracking-widest uppercase text-xl md:text-3xl drop-shadow-sm text-center">
+              Agenda
+            </h2>
+          </div>
+          <p className="text-lg md:text-xl text-text-dark/80 font-light max-w-2xl mx-auto mt-2">
             Bekijk de planning voor aankomende ademcirkels en evenementen.
           </p>
         </motion.div>
@@ -900,9 +888,11 @@ const FAQ = () => {
     >
       <div className="absolute inset-0 bg-white/50 backdrop-blur-[3px]"></div>
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-        <div className="bg-white/70 backdrop-blur-md p-8 md:p-10 rounded-3xl shadow-xl border border-white/50 mb-12 mx-auto max-w-3xl text-center flex flex-col items-center justify-center">
-          <h2 className="text-4xl md:text-5xl font-medium text-powder-blue mb-4 drop-shadow-sm tracking-tight text-center">Veelgestelde Vragen</h2>
-          <p className="text-lg md:text-xl text-text-dark/80 font-light text-center mt-2">Alles wat je moet weten voor je eerste sessie.</p>
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-white/60 border border-powder-blue/40 shadow-lg shadow-powder-blue/10 backdrop-blur-md mb-6">
+            <h2 className="text-powder-blue font-bold tracking-widest uppercase text-xl md:text-3xl drop-shadow-sm text-center">Veelgestelde Vragen</h2>
+          </div>
+          <p className="text-lg md:text-xl text-text-dark/80 font-light mx-auto mt-2">Alles wat je moet weten voor je eerste sessie.</p>
         </div>
 
         <div className="space-y-6">
@@ -991,8 +981,8 @@ const CTA = () => {
       <div className="absolute inset-0 bg-white/50 backdrop-blur-[3px]"></div>
       <div className="max-w-5xl mx-auto px-6 md:px-12 relative z-10">
         <div className="text-center relative z-10">
-          <div className="bg-white/70 backdrop-blur-md p-8 md:p-10 rounded-3xl shadow-xl border border-white/50 mb-16 mx-auto max-w-4xl text-center flex flex-col items-center justify-center">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium text-powder-blue mb-2 drop-shadow-sm tracking-tight text-center">
+          <div className="inline-flex items-center justify-center px-8 py-4 flex-wrap rounded-full bg-white/60 border border-powder-blue/40 shadow-lg shadow-powder-blue/10 backdrop-blur-md mb-16 mx-auto w-full max-w-4xl">
+            <h2 className="text-powder-blue font-bold tracking-widest uppercase text-xl md:text-3xl drop-shadow-sm text-center w-full">
               Klaar om je adem in beweging te zetten?
             </h2>
           </div>
@@ -1120,6 +1110,7 @@ const Footer = () => {
         <div>
           <h4 className="font-medium mb-6 text-powder-blue tracking-wide">Navigatie</h4>
           <ul className="space-y-4 text-white/70 font-light">
+            <li><a href="#reality-journey" className="hover:text-powder-blue transition-colors">Herken jij jezelf?</a></li>
             <li><a href="#resultaten" className="hover:text-powder-blue transition-colors">Wat brengt het jou?</a></li>
             <li><a href="#methode" className="hover:text-powder-blue transition-colors">Aanbod</a></li>
             <li><a href="#agenda" className="hover:text-powder-blue transition-colors">Agenda</a></li>
@@ -1160,12 +1151,94 @@ const Footer = () => {
   );
 };
 
+const RealityJourney = () => {
+  const realityItems = [
+    {
+      title: "Aanhoudende Stress",
+      text: "Stress brengt je zenuwstelsel in een staat van constante paraatheid, ook wel 'high arousal' genoemd. In deze actiegerichte staat reageer je vaker impulsief en vanuit overlevingsdrang, waardoor je het gevoel verliest dat je zelf aan het roer staat van je beslissingen."
+    },
+    {
+      title: "Fysieke Spanning",
+      text: "Je lichaam houdt onbewust emotionele patronen vast in de vorm van fysieke spanning. Volgens onderzoek zorgt bewuste ademhaling voor een directe en significante afname van deze opgebouwde spanning, doordat de fysieke blokkades in het lichaam worden aangesproken."
+    },
+    {
+      title: "De Drukte van de Dag",
+      text: "De constante stroom van externe prikkels en taken veroorzaakt 'mentale frictie', waardoor je aandacht voortdurend naar buiten is gericht. Hierdoor raak je de verbinding met het huidige moment kwijt en word je meegezogen in een stroom van gedachten waar je geen controle over lijkt te hebben."
+    },
+    {
+      title: "Gevoelens van Angst",
+      text: "Angst fungeert als een belichaamde spiegel van je innerlijke staat en houdt je vaak gevangen in zorgen over de toekomst of herinneringen aan het verleden. Ademwerk helpt om deze negatieve gevoelens te verminderen en creëert een meer open gemoedstoestand, waardoor je minder gefocust raakt op de dreiging en meer op je eigen kracht."
+    },
+    {
+      title: "Slechte Nachtrust",
+      text: "Wanneer de drukte van de dag blijft doorwerken in je systeem, kan je lichaam niet overschakelen naar de herstelmodus. Een verstoord ademhalingsritme belemmert de variabiliteit van je hartslag (HRV), wat essentieel is voor het induceren van een diepe, herstellende slaap."
+    },
+    {
+      title: "De weg naar herstel",
+      text: "De weg naar herstel begint bij het cultiveren van introspectie: het vermogen om je aandacht naar binnen te richten en je eigen staat te herkennen zonder oordeel. Door bewust te leren werken met je ademhaling, word je weer de kapitein op je eigen schip. Tijdens deze reis kun je staten van bewustzijn bereiken die vergelijkbaar zijn met diepe meditatie of mystieke ervaringen, wat helpt om hardnekkige patronen te doorbreken. Dit proces ruimt blokkades op in je hele systeem en helpt je algehele veerkracht te vergroten. Zodat je weer vanuit intentie en rust in het leven kunt staan."
+    }
+  ];
+
+  return (
+    <section className="py-20 bg-bg-base relative overflow-hidden" id="reality-journey">
+      {/* Decorative background circle */}
+      <div className="absolute top-1/2 left-[-10%] w-[40vw] h-[40vw] -translate-y-1/2 rounded-full bg-soft-lavender/30 blur-[100px] pointer-events-none"></div>
+      
+      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10 w-full">
+        
+        <div className="mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <div className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-white/60 border border-powder-blue/40 shadow-lg shadow-powder-blue/10 backdrop-blur-md mx-auto">
+              <h2 className="text-powder-blue font-bold tracking-widest uppercase text-xl md:text-3xl drop-shadow-sm text-center">
+                Herken jij jezelf in een van deze signalen?
+              </h2>
+            </div>
+          </motion.div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {realityItems.map((item, idx) => (
+              <motion.div 
+                key={idx} 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.7, delay: idx * 0.15, ease: "easeOut" }}
+                className="group relative bg-white/70 backdrop-blur-md rounded-3xl p-8 border border-leaf-green/20 shadow-sm transition-all duration-500 hover:shadow-lg hover:shadow-leaf-green/10 hover:bg-leaf-green/5 hover:-translate-y-1"
+              >
+                <h3 className="text-xl font-medium text-text-dark group-hover:text-leaf-green transition-colors duration-300 flex items-center justify-between">
+                  {item.title}
+                  <span className="text-powder-blue group-hover:text-leaf-green transition-all duration-300 group-hover:rotate-180">
+                    <ChevronDown size={20} />
+                  </span>
+                </h3>
+                <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-in-out">
+                  <div className="overflow-hidden">
+                    <p className="mt-4 text-text-dark/80 font-light leading-relaxed">
+                      {item.text}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </section>
+  )
+}
+
 export default function App() {
   return (
     <div className="min-h-screen font-sans bg-bg-base selection:bg-soft-lavender selection:text-text-dark">
       <Navbar />
       <main>
         <Hero />
+        <RealityJourney />
         <Benefits />
         <Aanbod />
         <Agenda />
