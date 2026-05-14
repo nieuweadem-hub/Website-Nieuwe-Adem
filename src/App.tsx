@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle, Calendar, Instagram, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
+import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle, Calendar, Instagram, ChevronLeft, ChevronRight, Quote, Phone, Mail, AtSign } from 'lucide-react';
 
 // --- Components ---
 
@@ -412,7 +412,7 @@ const Benefits = () => {
   return (
     <section id="resultaten" className="py-32 bg-bg-base relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto mb-24">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -456,73 +456,103 @@ const Benefits = () => {
               ))}
             </div>
           </motion.div>
-
-          {/* Testimonials Carousel */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="mt-32"
-          >
-            <div className="text-center mb-10">
-              <h3 className="text-2xl font-medium text-powder-blue mb-2">Ervaringen van anderen</h3>
-              <div className="w-16 h-1 bg-leaf-green/50 mx-auto rounded-full"></div>
-            </div>
-
-            <div className="relative bg-white rounded-[2rem] p-8 md:p-12 shadow-xl border border-soft-lavender/30 flex flex-col items-center min-h-[300px] justify-center">
-              <Quote className="text-powder-blue/20 w-16 h-16 absolute top-6 left-6" />
-              
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentTestimonial}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.4 }}
-                  className="text-center relative z-10 px-4 md:px-12"
-                >
-                  <p className="text-lg md:text-xl text-text-dark/80 font-light italic leading-relaxed mb-8">
-                    "{testimonials[currentTestimonial].text}"
-                  </p>
-                  <div className="flex items-center justify-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-soft-lavender/40 flex items-center justify-center text-powder-blue font-bold">
-                      {testimonials[currentTestimonial].name.charAt(0)}
-                    </div>
-                    <p className="font-semibold text-text-dark tracking-wide">{testimonials[currentTestimonial].name}</p>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Controls */}
-              <div className="absolute top-1/2 -translate-y-1/2 w-full flex justify-between px-4 md:px-6 left-0 pointer-events-none">
-                <button 
-                  onClick={prevTestimonial}
-                  className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-md flex items-center justify-center text-powder-blue hover:text-leaf-green hover:shadow-lg transition-all border border-soft-lavender/20 pointer-events-auto transform -translate-x-1/2 md:translate-x-0"
-                >
-                  <ChevronLeft size={24} />
-                </button>
-                <button 
-                  onClick={nextTestimonial}
-                  className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-md flex items-center justify-center text-powder-blue hover:text-leaf-green hover:shadow-lg transition-all border border-soft-lavender/20 pointer-events-auto transform translate-x-1/2 md:translate-x-0"
-                >
-                  <ChevronRight size={24} />
-                </button>
-              </div>
-
-              {/* Dots */}
-              <div className="flex gap-2 mt-8 z-10">
-                {testimonials.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentTestimonial(idx)}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === currentTestimonial ? 'bg-leaf-green w-6' : 'bg-soft-lavender'}`}
-                  />
-                ))}
-              </div>
-            </div>
-          </motion.div>
         </div>
+
+        {/* Google Reviews Sectie */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="mt-16 w-full"
+        >
+          <div className="text-center mb-16">
+            <h3 className="text-3xl md:text-4xl font-medium text-text-dark mb-4 drop-shadow-sm tracking-tight">Ervaringen van anderen</h3>
+            <div className="w-16 h-1 bg-[#4285F4] mx-auto rounded-full mb-6"></div>
+            <div className="flex items-center justify-center gap-2 text-text-dark/80 text-lg">
+              <span className="font-semibold">Uitstekend</span>
+              <div className="flex text-[#FFC107] text-xl">
+                ★★★★★
+              </div>
+              <span className="text-sm font-normal text-text-dark/60 ml-2">op basis van Google Reviews</span>
+            </div>
+          </div>
+
+          <div className="flex justify-center flex-wrap gap-6 mb-12">
+            {[
+              { name: "Inge Thoen", text: "Martin heeft kennis van zaken, zijn voorbereiding op de sessie heeft hij met mij van te voren uitgebreid doorgenomen. Tijdens de sessie voelde ik me erg op mijn gemak, zijn stem is heel prettig om naar te luisteren, wat maakte dat ik het als heel fijn en ontspannen heb ervaren." }
+            ].map((review, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full cursor-default max-w-md w-full"
+              >
+                <div className="flex justify-between items-start mb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#4285F4]/20 to-[#4285F4]/10 text-[#4285F4] flex items-center justify-center font-bold text-lg">
+                      {review.name.charAt(0)}
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-text-dark">{review.name}</h4>
+                      <p className="text-xs text-text-dark/50">Geverifieerde review</p>
+                    </div>
+                  </div>
+                  {/* Google 'G' Logo Placeholder */}
+                  <div className="w-6 h-6 flex-shrink-0">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                      <path d="M1 1h22v22H1z" fill="none" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="flex text-[#FFC107] text-lg mb-4">
+                  ★★★★★
+                </div>
+                <p className="text-text-dark/70 font-light leading-relaxed flex-grow text-[15px]">
+                  "{review.text}"
+                </p>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-4">
+            <a 
+              href="#" 
+              onClick={(e) => e.preventDefault()}
+              className="inline-flex items-center gap-3 px-8 py-4 bg-white border border-gray-200 rounded-full text-text-dark font-medium shadow-sm hover:shadow-md hover:bg-gray-50 transition-all duration-300 w-full sm:w-auto justify-center"
+            >
+              <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+              </svg>
+              Bekijk al mijn reviews op Google
+            </a>
+            <a 
+              href="https://g.page/r/CQJt40sQQ2mpEBM/review" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 px-8 py-4 bg-[#4285F4] text-white rounded-full font-medium shadow-sm hover:shadow-md hover:bg-[#3367D6] transition-all duration-300 w-full sm:w-auto justify-center"
+            >
+              <div className="bg-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                </svg>
+              </div>
+              Laat een review achter op Google
+            </a>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -1087,8 +1117,18 @@ const Footer = () => {
         <div>
           <h4 className="font-medium mb-6 text-powder-blue tracking-wide">Contact</h4>
           <ul className="space-y-4 text-white/70 font-light">
-            <li>Bergen op Zoom, Nederland</li>
-            <li><a href="#contact" className="hover:text-powder-blue transition-colors">Stuur een bericht via het formulier</a></li>
+            <li className="flex items-center gap-3">
+              <MapPin size={18} className="text-powder-blue/70" />
+              <span>Bergen op Zoom, Nederland</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <Phone size={18} className="text-powder-blue/70" />
+              <a href="tel:0628348341" className="hover:text-powder-blue transition-colors">0628348341</a>
+            </li>
+            <li className="flex items-center gap-3">
+              <Mail size={18} className="text-powder-blue/70" />
+              <a href="mailto:martin.nieuweadem@gmail.com" className="hover:text-powder-blue transition-colors">martin.nieuweadem@gmail.com</a>
+            </li>
           </ul>
         </div>
       </div>
