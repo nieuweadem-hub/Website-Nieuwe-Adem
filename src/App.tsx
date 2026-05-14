@@ -420,14 +420,22 @@ const Benefits = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
+            className="bg-white/70 backdrop-blur-md p-8 md:p-10 rounded-3xl shadow-xl border border-white/50 mb-16 mx-auto max-w-3xl text-center flex flex-col items-center justify-center"
           >
-            <h2 className="text-3xl md:text-4xl font-medium text-powder-blue mb-4 drop-shadow-sm tracking-tight">
+            <h2 className="text-3xl md:text-4xl font-medium text-powder-blue mb-4 drop-shadow-sm tracking-tight text-center">
               Wat brengt het jou?
             </h2>
-            <p className="text-xl md:text-2xl text-text-dark font-semibold mb-12">
+            <p className="text-xl md:text-2xl text-text-dark font-semibold text-center mt-2">
               De kracht van verbonden ademhaling
             </p>
-            <div className="space-y-10">
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="space-y-10"
+          >
               {[
                 {
                   title: "Krachtige stressreductie en mentale helderheid",
@@ -456,7 +464,6 @@ const Benefits = () => {
                   </div>
                 </div>
               ))}
-            </div>
           </motion.div>
         </div>
 
@@ -526,8 +533,9 @@ const Benefits = () => {
 
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-4">
             <a 
-              href="#" 
-              onClick={(e) => e.preventDefault()}
+              href="https://www.google.com/maps/place/Nieuwe+Adem/@51.4958499,4.2840367,17z/data=!4m8!3m7!1s0x47c46d2b0e502c3d:0xa96943104be36d02!8m2!3d51.4958466!4d4.2866116!9m1!1b1!16s%2Fg%2F11z7fp982f?authuser=0&entry=ttu&g_ep=EgoyMDI2MDUxMS4wIKXMDSoASAFQAw%3D%3D" 
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-3 px-8 py-4 bg-white border border-gray-200 rounded-full text-text-dark font-medium shadow-sm hover:shadow-md hover:bg-gray-50 transition-all duration-300 w-full sm:w-auto justify-center"
             >
               <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -752,12 +760,12 @@ const Agenda = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="bg-white/70 backdrop-blur-md p-8 md:p-10 rounded-[2rem] shadow-xl border border-white/50 mb-16 mx-auto max-w-3xl text-center flex flex-col items-center justify-center"
         >
-          <h2 className="text-4xl md:text-5xl font-medium text-powder-blue mb-6 drop-shadow-sm tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-medium text-powder-blue mb-6 drop-shadow-sm tracking-tight text-center">
             Agenda
           </h2>
-          <p className="text-lg md:text-xl text-text-dark/80 font-light max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-text-dark/80 font-light max-w-2xl mx-auto text-center mt-2">
             Bekijk de planning voor aankomende ademcirkels en evenementen.
           </p>
         </motion.div>
@@ -892,9 +900,9 @@ const FAQ = () => {
     >
       <div className="absolute inset-0 bg-white/50 backdrop-blur-[3px]"></div>
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-medium text-white mb-6 drop-shadow-md tracking-tight">Veelgestelde Vragen</h2>
-          <p className="text-lg text-white/90 font-light drop-shadow-sm">Alles wat je moet weten voor je eerste sessie.</p>
+        <div className="bg-white/70 backdrop-blur-md p-8 md:p-10 rounded-3xl shadow-xl border border-white/50 mb-12 mx-auto max-w-3xl text-center flex flex-col items-center justify-center">
+          <h2 className="text-4xl md:text-5xl font-medium text-powder-blue mb-4 drop-shadow-sm tracking-tight text-center">Veelgestelde Vragen</h2>
+          <p className="text-lg md:text-xl text-text-dark/80 font-light text-center mt-2">Alles wat je moet weten voor je eerste sessie.</p>
         </div>
 
         <div className="space-y-6">
@@ -983,9 +991,11 @@ const CTA = () => {
       <div className="absolute inset-0 bg-white/50 backdrop-blur-[3px]"></div>
       <div className="max-w-5xl mx-auto px-6 md:px-12 relative z-10">
         <div className="text-center relative z-10">
-          <h2 className="text-4xl md:text-6xl font-medium text-white mb-16 drop-shadow-md tracking-tight">
-            Klaar om je adem in beweging te zetten?
-          </h2>
+          <div className="bg-white/70 backdrop-blur-md p-8 md:p-10 rounded-3xl shadow-xl border border-white/50 mb-16 mx-auto max-w-4xl text-center flex flex-col items-center justify-center">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium text-powder-blue mb-2 drop-shadow-sm tracking-tight text-center">
+              Klaar om je adem in beweging te zetten?
+            </h2>
+          </div>
 
           <div id="contact-form" className="max-w-xl mx-auto scroll-mt-24">
             <form 
