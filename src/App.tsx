@@ -1130,10 +1130,6 @@ const Footer = () => {
               <a href="tel:0628348341" className="hover:text-powder-blue transition-colors">0628348341</a>
             </li>
             <li className="flex items-center gap-3">
-              <img src="https://i.ibb.co/S4WzZhJn/whatsapp.png" alt="WhatsApp" className="w-[18px] h-[18px] object-contain" />
-              <a href="https://wa.me/31628348341" target="_blank" rel="noopener noreferrer" className="hover:text-[#25D366] transition-colors">Stuur een bericht via WhatsApp</a>
-            </li>
-            <li className="flex items-center gap-3">
               <Mail size={18} className="text-powder-blue/70" />
               <a href="mailto:martin.nieuweadem@gmail.com" className="hover:text-powder-blue transition-colors">martin.nieuweadem@gmail.com</a>
             </li>
@@ -1232,6 +1228,39 @@ const RealityJourney = () => {
   )
 }
 
+const FloatingSocials = () => {
+  return (
+    <div className="fixed bottom-6 lg:bottom-10 right-6 lg:right-10 z-[100] flex flex-col gap-4">
+      <motion.a
+        href="https://www.instagram.com/martinnieuweadem/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center justify-center w-14 h-14 lg:w-16 lg:h-16 bg-white rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.15)] hover:shadow-[0_8px_40px_rgb(225,48,108,0.3)] hover:-translate-y-1 transition-all duration-300 group"
+        initial={{ scale: 0, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        transition={{ delay: 1.1, duration: 0.5, type: "spring" }}
+        aria-label="Volg mij op Instagram"
+      >
+        <div className="w-9 h-9 lg:w-11 lg:h-11 rounded-[12px] bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+          <Instagram className="text-white w-6 h-6 lg:w-7 lg:h-7" strokeWidth={2.2} />
+        </div>
+      </motion.a>
+      <motion.a
+        href="https://wa.me/31628348341"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center justify-center w-14 h-14 lg:w-16 lg:h-16 bg-white rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.15)] hover:shadow-[0_8px_40px_rgb(37,211,102,0.3)] hover:-translate-y-1 transition-all duration-300 group"
+        initial={{ scale: 0, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        transition={{ delay: 1, duration: 0.5, type: "spring" }}
+        aria-label="Stuur een bericht via WhatsApp"
+      >
+        <img src="https://i.ibb.co/S4WzZhJn/whatsapp.png" alt="WhatsApp" className="w-8 h-8 lg:w-10 lg:h-10 object-contain group-hover:scale-110 transition-transform duration-300" />
+      </motion.a>
+    </div>
+  );
+};
+
 export default function App() {
   return (
     <div className="min-h-screen font-sans bg-bg-base selection:bg-soft-lavender selection:text-text-dark">
@@ -1247,6 +1276,7 @@ export default function App() {
         <CTA />
       </main>
       <Footer />
+      <FloatingSocials />
     </div>
   );
 }
