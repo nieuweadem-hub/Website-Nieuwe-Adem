@@ -285,9 +285,11 @@ const Aanbod = () => {
             </motion.button>
           </div>
 
-          <p className="text-lg text-white font-light leading-relaxed drop-shadow-md">
-            Kies de sessie die bij je past of vraag naar andere mogelijkheden. Of je nu een eerste stap wilt zetten of klaar bent voor een dieper traject, ik begeleid je graag op jouw pad naar meer rust en ruimte.
-          </p>
+          <div className="bg-white/70 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-xl border border-white/50 mt-8 mx-auto max-w-2xl">
+            <p className="text-lg text-text-dark/80 font-light leading-relaxed">
+              Kies de sessie die bij je past of vraag naar andere mogelijkheden. Of je nu een eerste stap wilt zetten of klaar bent voor een dieper traject, ik begeleid je graag op jouw pad naar meer rust en ruimte.
+            </p>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -480,7 +482,8 @@ const Benefits = () => {
 
           <div className="flex justify-center flex-wrap gap-6 mb-12">
             {[
-              { name: "Inge Thoen", text: "Martin heeft kennis van zaken, zijn voorbereiding op de sessie heeft hij met mij van te voren uitgebreid doorgenomen. Tijdens de sessie voelde ik me erg op mijn gemak, zijn stem is heel prettig om naar te luisteren, wat maakte dat ik het als heel fijn en ontspannen heb ervaren." }
+              { name: "Inge Thoen", text: "Martin heeft kennis van zaken, zijn voorbereiding op de sessie heeft hij met mij van te voren uitgebreid doorgenomen. Tijdens de sessie voelde ik me erg op mijn gemak, zijn stem is heel prettig om naar te luisteren, wat maakte dat ik het als heel fijn en ontspannen heb ervaren." },
+              { name: "Remon Kleijn", text: "Martin is een fijn en rustig persoon. Hij begeleid je goed. En stelt je erg op je gemak. Ben normaal best gesloten. Maar tijdens de ademsessie kwamen er de nodige emoties los. Na de sessie wordt er veel aandacht gegeven. En voelde mij hierdoor erg ontspannen en opgelucht. Zitten er emoties vast. Zou ii de ademsessie erg aanraden." }
             ].map((review, i) => (
               <motion.div
                 key={i}
