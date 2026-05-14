@@ -17,10 +17,10 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { name: 'Over Martin', href: '#over' },
-    { name: 'Aanbod', href: '#methode' },
     { name: 'Wat brengt het jou?', href: '#resultaten' },
+    { name: 'Aanbod', href: '#methode' },
     { name: 'Agenda', href: '#agenda' },
+    { name: 'Over Martin', href: '#over' },
     { name: 'FAQ', href: '#faq' },
   ];
 
@@ -848,7 +848,7 @@ const Agenda = () => {
 };
 
 const FAQ = () => {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const faqs = [
     {
@@ -1107,10 +1107,10 @@ const Footer = () => {
         <div>
           <h4 className="font-medium mb-6 text-powder-blue tracking-wide">Navigatie</h4>
           <ul className="space-y-4 text-white/70 font-light">
-            <li><a href="#over" className="hover:text-powder-blue transition-colors">Over Martin</a></li>
-            <li><a href="#methode" className="hover:text-powder-blue transition-colors">Aanbod</a></li>
             <li><a href="#resultaten" className="hover:text-powder-blue transition-colors">Wat brengt het jou?</a></li>
+            <li><a href="#methode" className="hover:text-powder-blue transition-colors">Aanbod</a></li>
             <li><a href="#agenda" className="hover:text-powder-blue transition-colors">Agenda</a></li>
+            <li><a href="#over" className="hover:text-powder-blue transition-colors">Over Martin</a></li>
             <li><a href="#faq" className="hover:text-powder-blue transition-colors">FAQ</a></li>
           </ul>
         </div>
@@ -1124,6 +1124,10 @@ const Footer = () => {
             <li className="flex items-center gap-3">
               <Phone size={18} className="text-powder-blue/70" />
               <a href="tel:0628348341" className="hover:text-powder-blue transition-colors">0628348341</a>
+            </li>
+            <li className="flex items-center gap-3">
+              <img src="https://i.ibb.co/S4WzZhJn/whatsapp.png" alt="WhatsApp" className="w-[18px] h-[18px] object-contain" />
+              <a href="https://wa.me/31628348341" target="_blank" rel="noopener noreferrer" className="hover:text-[#25D366] transition-colors">Stuur een bericht via WhatsApp</a>
             </li>
             <li className="flex items-center gap-3">
               <Mail size={18} className="text-powder-blue/70" />
@@ -1149,10 +1153,10 @@ export default function App() {
       <Navbar />
       <main>
         <Hero />
-        <About />
-        <Aanbod />
         <Benefits />
+        <Aanbod />
         <Agenda />
+        <About />
         <FAQ />
         <CTA />
       </main>
