@@ -1148,6 +1148,8 @@ const Footer = () => {
 };
 
 const RealityJourney = () => {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
   const realityItems = [
     {
       title: "Aanhoudende Stress",
@@ -1203,21 +1205,36 @@ const RealityJourney = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.7, delay: idx * 0.15, ease: "easeOut" }}
-                className="group relative bg-white/70 backdrop-blur-md rounded-3xl p-8 border border-leaf-green/20 shadow-sm transition-all duration-500 hover:shadow-lg hover:shadow-leaf-green/10 hover:bg-leaf-green/5 hover:-translate-y-1"
+                className="bg-white/70 backdrop-blur-md rounded-3xl overflow-hidden border border-leaf-green/20 shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-leaf-green/10"
               >
-                <h3 className="text-xl font-medium text-text-dark group-hover:text-leaf-green transition-colors duration-300 flex items-center justify-between">
-                  {item.title}
-                  <span className="text-powder-blue group-hover:text-leaf-green transition-all duration-300 group-hover:rotate-180">
-                    <ChevronDown size={20} />
+                <button
+                  className="w-full p-8 text-left flex justify-between items-center focus:outline-none"
+                  onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
+                >
+                  <span className={`text-xl font-medium transition-colors duration-300 ${openIndex === idx ? 'text-leaf-green' : 'text-text-dark'}`}>
+                    {item.title}
                   </span>
-                </h3>
-                <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-in-out">
-                  <div className="overflow-hidden">
-                    <p className="mt-4 text-text-dark/80 font-light leading-relaxed">
-                      {item.text}
-                    </p>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${openIndex === idx ? 'bg-leaf-green text-white' : 'bg-leaf-green/10 text-leaf-green'}`}>
+                    <ChevronDown 
+                      className={`transition-transform duration-300 ${openIndex === idx ? 'rotate-180' : ''}`} 
+                      size={20} 
+                    />
                   </div>
-                </div>
+                </button>
+                <AnimatePresence>
+                  {openIndex === idx && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <div className="px-8 pb-8 pt-0 text-text-dark/80 font-light leading-relaxed">
+                        {item.text}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             ))}
           </div>
