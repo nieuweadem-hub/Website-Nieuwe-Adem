@@ -989,7 +989,7 @@ const CTA = () => {
 
           <div id="contact-form" className="max-w-xl mx-auto scroll-mt-24">
             <form 
-              action="https://formsubmit.co/4259591ae232cefb5024f14d196935cf"
+              action="https://formsubmit.co/ajax/4259591ae232cefb5024f14d196935cf"
               method="POST"
               className="bg-white/60 backdrop-blur-md p-8 md:p-10 rounded-[2rem] border border-white/60 shadow-xl text-left"
               onSubmit={(e) => {
