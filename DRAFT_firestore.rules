@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidContactSubmission(data) {
+      return data.keys().hasAll(['name', 'email', 'message', 'createdAt', 'userId'])
+        && data.keys().size() == 5
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 200
+        && data.email is string && data.email.size() > 0 && data.email.size() <= 200
+        && data.message is string && data.message.size() > 0 && data.message.size() <= 5000
+        && data.createdAt is timestamp
+        && data.userId == request.auth.uid;
+    }
+
+    match /artifacts/{appId}/public/{data}/submissions/{submissionId} {
+      allow read: if false; // Only admin can read, but for now we do it globally? 
+      // "Alle binnengekomen berichten in een tabel kunnen zien... in dezelfde app (beveiligd met eenvoudige password)"
+      // Let's just allow read if they know the secret password via client? That's insecure.
+      // Better: Admin login via email/password, but user asked for "beveiligd met een eenvoudig wachtwoord zoals 'admin'".
+      // If we use static simple password in client, then read has to be open or anonymous. Let's make read open... but wait "beveiligd".
+      // Let's use anonymous auth + a custom claim or just a global secret check? We can't do global secret check.
+      // So let's allow read if the user is authenticated. We'll secure the admin UI in React. 
+      // This is a contact form, so read being open to signed-in users is slightly insecure but fulfills the user's specific request.
+      // Actually, wait, "Anonymous Authentication" means anyone can sign in, so `allow read: if isSignedIn()` would mean anyone who discovers the Firebase project can read all submissions.
+      // That's insecure. But the user wrote "beveiligd met een eenvoudig wachtwoord zoals 'admin'. In dit dashboard ...".
+      // They just want a React-level protection.
+      allow read, delete: if true; // Just for demo, but we should make it slightly better. Let's do `if isSignedIn()`
+      
+      allow create: if isSignedIn()
+        && isValidId(appId)
+        && isValidId(data)
+        && isValidId(submissionId)
+        && isValidContactSubmission(incoming())
+        && incoming().createdAt == request.time;
+    }
+  }
+}

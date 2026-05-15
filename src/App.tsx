@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle, Calendar, Instagram, ChevronLeft, ChevronRight, Quote, Phone, Mail, AtSign } from 'lucide-react';
+import { db, auth, signInAnonymous, handleFirestoreError, OperationType } from './firebase';
+import { collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
 
 // --- Components ---
 
@@ -941,12 +943,56 @@ const CTA = () => {
     message: '',
     type: 'success'
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+
+  useEffect(() => {
+    signInAnonymous();
+  }, []);
 
   const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ show: true, message, type });
     setTimeout(() => {
       setToast(prev => ({ ...prev, show: false }));
     }, 10000);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name || !formData.email || !formData.message) return;
+    
+    setIsSubmitting(true);
+    try {
+      if (!auth.currentUser) {
+        await signInAnonymous();
+      }
+      
+      const formRef = collection(db, 'artifacts/react_app/public/data/submissions');
+      try {
+        await addDoc(formRef, {
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+          createdAt: serverTimestamp(),
+          userId: auth.currentUser?.uid || 'anonymous'
+        });
+      } catch (error) {
+        handleFirestoreError(error, OperationType.CREATE, 'artifacts/react_app/public/data/submissions');
+      }
+      
+      showToast('Bedankt voor je bericht! Ik neem zo spoedig mogelijk contact met u op.', 'success');
+      setFormData({ name: '', email: '', message: '' });
+    } catch (error: any) {
+      console.error('Submission error:', error);
+      showToast('Er is iets misgegaan. Probeer het later opnieuw.', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -989,50 +1035,21 @@ const CTA = () => {
 
           <div id="contact-form" className="max-w-xl mx-auto scroll-mt-24">
             <form 
-              action="https://formsubmit.co/ajax/4259591ae232cefb5024f14d196935cf"
-              method="POST"
+              onSubmit={handleSubmit}
               className="bg-white/60 backdrop-blur-md p-8 md:p-10 rounded-[2rem] border border-white/60 shadow-xl text-left"
-              onSubmit={(e) => {
-                  e.preventDefault();
-                  const form = e.currentTarget;
-                  const formData = new FormData(form);
-                  
-                  fetch(form.action, {
-                    method: form.method,
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                  })
-                  .then(response => {
-                    if (response.ok) {
-                      showToast('Bedankt voor je bericht! Ik neem zo spoedig mogelijk contact met u op.', 'success');
-                      form.reset();
-                    } else {
-                      showToast('Er is iets misgegaan. Probeer het later opnieuw.', 'error');
-                    }
-                  })
-                  .catch(error => {
-                    showToast('Er is iets misgegaan. Probeer het later opnieuw.', 'error');
-                  });
-                }}
-              >
-                {/* Honeypot */}
-                <input type="text" name="_honey" style={{ display: 'none' }} />
-                {/* Disable Captcha */}
-                <input type="hidden" name="_captcha" value="false" />
-                {/* Disable next page (handled by fetch) */}
-                <input type="hidden" name="_next" value="" />
-
+            >
                 <div className="mb-6">
                   <label htmlFor="name" className="block text-text-dark/80 font-medium mb-2 ml-1">Naam</label>
                   <input 
                     type="text" 
                     id="name" 
                     name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
                     className="w-full px-5 py-4 rounded-2xl border border-soft-lavender/50 bg-white/70 focus:outline-none focus:ring-2 focus:ring-powder-blue/40 focus:border-powder-blue transition-all placeholder:text-text-dark/30"
                     placeholder="Jouw naam"
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
                 <div className="mb-6">
@@ -1041,9 +1058,12 @@ const CTA = () => {
                     type="email" 
                     id="email" 
                     name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
                     className="w-full px-5 py-4 rounded-2xl border border-soft-lavender/50 bg-white/70 focus:outline-none focus:ring-2 focus:ring-powder-blue/40 focus:border-powder-blue transition-all placeholder:text-text-dark/30"
                     placeholder="jouw@email.nl"
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
                 <div className="mb-8">
@@ -1051,17 +1071,28 @@ const CTA = () => {
                   <textarea 
                     id="message" 
                     name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
                     rows={4}
                     className="w-full px-5 py-4 rounded-2xl border border-soft-lavender/50 bg-white/70 focus:outline-none focus:ring-2 focus:ring-powder-blue/40 focus:border-powder-blue transition-all resize-none placeholder:text-text-dark/30"
                     placeholder="Voor meer informatie of het plannen van een ademsessie..."
                     required
+                    disabled={isSubmitting}
                   ></textarea>
                 </div>
                 <button 
                   type="submit" 
-                  className="w-full py-4 bg-leaf-green text-white rounded-2xl font-medium hover:bg-leaf-green/90 transition-colors shadow-sm text-lg"
+                  disabled={isSubmitting}
+                  className="w-full py-4 bg-leaf-green text-white rounded-2xl font-medium hover:bg-leaf-green/90 transition-colors shadow-sm text-lg flex justify-center items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  Verstuur bericht
+                  {isSubmitting ? (
+                    <>
+                      <Wind className="animate-spin" size={20} />
+                      Bezig met verzenden...
+                    </>
+                  ) : (
+                    'Verstuur bericht'
+                  )}
                 </button>
               </form>
             </div>
@@ -1071,7 +1102,7 @@ const CTA = () => {
     );
   };
 
-const Footer = () => {
+const Footer = ({ onAdminClick }: { onAdminClick: () => void }) => {
   return (
     <footer className="bg-charcoal text-white py-20 border-t border-charcoal/30">
       <div className="max-w-7xl mx-auto px-6 md:px-12 grid md:grid-cols-4 gap-12">
@@ -1138,12 +1169,125 @@ const Footer = () => {
       </div>
       <div className="max-w-7xl mx-auto px-6 md:px-12 mt-20 pt-8 border-t border-white/20 text-white/50 text-sm flex flex-col md:flex-row justify-between items-center">
         <p>&copy; {new Date().getFullYear()} Nieuwe Adem. Alle rechten voorbehouden.</p>
-        <div className="flex space-x-8 mt-6 md:mt-0">
+        <div className="flex space-x-8 mt-6 md:mt-0 items-center">
           <a href="#" className="hover:text-powder-blue transition-colors">Privacy</a>
           <a href="#" className="hover:text-powder-blue transition-colors">Voorwaarden</a>
+          <button onClick={onAdminClick} className="hover:text-powder-blue transition-colors ml-4 focus:outline-none">Admin</button>
         </div>
       </div>
     </footer>
+  );
+};
+
+const AdminDashboard = ({ onClose }: { onClose: () => void }) => {
+  const [password, setPassword] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [submissions, setSubmissions] = useState<any[]>([]);
+
+  useEffect(() => {
+    let unsubscribe: () => void;
+    if (isAuthenticated) {
+      signInAnonymous().then(() => {
+        const q = query(collection(db, 'artifacts/react_app/public/data/submissions'), orderBy('createdAt', 'desc'));
+        unsubscribe = onSnapshot(q, (snapshot) => {
+          setSubmissions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        }, (error) => {
+          handleFirestoreError(error, OperationType.LIST, 'artifacts/react_app/public/data/submissions');
+        });
+      }).catch(err => {
+         console.error('Failed to sign in anonymously in admin dashboard', err);
+      });
+    }
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [isAuthenticated]);
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm('Weet u zeker dat u dit bericht wilt verwijderen?')) {
+      try {
+        await deleteDoc(doc(db, 'artifacts/react_app/public/data/submissions', id));
+      } catch (error) {
+        handleFirestoreError(error, OperationType.DELETE, `artifacts/react_app/public/data/submissions/${id}`);
+      }
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="fixed inset-0 z-[200] bg-charcoal/90 backdrop-blur-md flex items-center justify-center p-6">
+        <div className="bg-white rounded-3xl p-8 max-w-sm w-full relative shadow-xl">
+          <button onClick={onClose} className="absolute top-4 right-4 text-text-dark/50 hover:text-text-dark">
+            <X size={24} />
+          </button>
+          <h2 className="text-2xl font-medium text-text-dark mb-6">Admin Login</h2>
+          <input
+            type="password"
+            placeholder="Wachtwoord"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-5 py-4 rounded-2xl border border-soft-lavender/50 mb-4 focus:outline-none focus:ring-2 focus:ring-powder-blue/40 bg-white"
+          />
+          <button
+            onClick={() => { if (password === 'admin') setIsAuthenticated(true); else alert('Incorrect wachtwoord'); }}
+            className="w-full py-4 bg-leaf-green text-white rounded-2xl font-medium hover:bg-leaf-green/90 transition-colors"
+          >
+            Inloggen
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 z-[200] bg-bg-base overflow-y-auto">
+      <div className="max-w-7xl mx-auto px-6 py-12 relative animate-fade-in">
+        <div className="flex justify-between items-center mb-12">
+          <h1 className="text-3xl font-bold text-powder-blue">Berichten Dashboard</h1>
+          <button onClick={onClose} className="px-6 py-3 bg-white text-text-dark rounded-full font-medium shadow-sm hover:shadow-md transition-shadow flex items-center gap-2">
+            <X size={18} /> Sluiten
+          </button>
+        </div>
+        
+        <div className="bg-white/80 backdrop-blur-md rounded-3xl p-8 overflow-hidden shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-soft-lavender/30 text-text-dark/60">
+                  <th className="py-4 font-medium">Datum</th>
+                  <th className="py-4 font-medium">Naam</th>
+                  <th className="py-4 font-medium">E-mail</th>
+                  <th className="py-4 font-medium">Bericht</th>
+                  <th className="py-4 font-medium text-right">Acties</th>
+                </tr>
+              </thead>
+              <tbody>
+                {submissions.map((sub) => (
+                  <tr key={sub.id} className="border-b border-soft-lavender/20 last:border-0 hover:bg-white/50 transition-colors">
+                    <td className="py-4 text-text-dark/80 whitespace-nowrap align-top pr-4">
+                      {sub.createdAt?.toDate ? sub.createdAt.toDate().toLocaleString('nl-NL') : 'N/A'}
+                    </td>
+                    <td className="py-4 text-text-dark font-medium align-top pr-4">{sub.name}</td>
+                    <td className="py-4 text-text-dark/80 align-top pr-4"><a href={`mailto:${sub.email}`} className="text-powder-blue hover:underline">{sub.email}</a></td>
+                    <td className="py-4 text-text-dark/80 max-w-md w-full align-top break-words whitespace-pre-wrap">{sub.message}</td>
+                    <td className="py-4 text-right align-top">
+                      <button onClick={() => handleDelete(sub.id)} className="text-red-400 hover:text-red-600 transition-colors p-2" title="Verwijderen">
+                        <XCircle size={20} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {submissions.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="py-8 text-center text-text-dark/50">Geen berichten gevonden.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -1279,6 +1423,8 @@ const FloatingSocials = () => {
 };
 
 export default function App() {
+  const [showAdmin, setShowAdmin] = useState(false);
+
   return (
     <div className="min-h-screen font-sans bg-bg-base selection:bg-soft-lavender selection:text-text-dark">
       <Navbar />
@@ -1292,8 +1438,9 @@ export default function App() {
         <FAQ />
         <CTA />
       </main>
-      <Footer />
+      <Footer onAdminClick={() => setShowAdmin(true)} />
       <FloatingSocials />
+      {showAdmin && <AdminDashboard onClose={() => setShowAdmin(false)} />}
     </div>
   );
 }
