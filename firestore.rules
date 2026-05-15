@@ -18,20 +18,18 @@ service cloud.firestore {
     }
 
     function isValidContactSubmission(data) {
-      return data.keys().hasAll(['name', 'email', 'message', 'createdAt', 'userId'])
-        && data.keys().size() == 5
+      return data.keys().hasAll(['name', 'email', 'message', 'createdAt'])
+        && (data.keys().size() == 4 || data.keys().size() == 5)
         && data.name is string && data.name.size() > 0 && data.name.size() <= 200
         && data.email is string && data.email.size() > 0 && data.email.size() <= 200
         && data.message is string && data.message.size() > 0 && data.message.size() <= 5000
-        && data.createdAt is timestamp
-        && data.userId == request.auth.uid;
+        && data.createdAt is timestamp;
     }
 
     match /artifacts/{appId}/public/{data}/submissions/{submissionId} {
-      allow read, delete: if isSignedIn(); // As requested by user's simple password logic
+      allow read, delete: if true; // Open reading because dashboard uses UI password
       
-      allow create: if isSignedIn()
-        && isValidId(appId)
+      allow create: if isValidId(appId)
         && isValidId(data)
         && isValidId(submissionId)
         && isValidContactSubmission(incoming())
