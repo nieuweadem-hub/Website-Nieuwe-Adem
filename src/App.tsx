@@ -984,6 +984,25 @@ const CTA = () => {
       } catch (error) {
         handleFirestoreError(error, OperationType.CREATE, 'artifacts/react_app/public/data/submissions');
       }
+
+      // Stuur ook een email via FormSubmit AJAX
+      try {
+        await fetch("https://formsubmit.co/ajax/martin.nieuweadem@gmail.com", {
+          method: "POST",
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            message: formData.message,
+            _subject: `Nieuw bericht van ${formData.name} via website`
+          })
+        });
+      } catch (emailError) {
+        console.error("E-mail verzenden mislukt:", emailError);
+      }
       
       showToast('Bedankt voor je bericht! Ik neem zo spoedig mogelijk contact met u op.', 'success');
       setFormData({ name: '', email: '', message: '' });
