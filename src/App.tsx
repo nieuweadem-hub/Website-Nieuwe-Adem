@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle, Calendar, Instagram, ChevronLeft, ChevronRight, Quote, Phone, Mail, AtSign } from 'lucide-react';
 import { db, auth, signInAnonymous, handleFirestoreError, OperationType } from './firebase';
 import { collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
+import emailjs from '@emailjs/browser';
 
 // --- Components ---
 
@@ -968,41 +969,22 @@ const CTA = () => {
     
     setIsSubmitting(true);
     try {
-      if (!auth.currentUser) {
-        await signInAnonymous();
+      if (!import.meta.env.VITE_EMAILJS_SERVICE_ID || !import.meta.env.VITE_EMAILJS_TEMPLATE_ID || !import.meta.env.VITE_EMAILJS_PUBLIC_KEY) {
+        throw new Error('EmailJS configuratie mist. Zorg ervoor dat de VITE_EMAILJS_ variabelen zijn ingesteld.');
       }
       
-      const formRef = collection(db, 'artifacts/react_app/public/data/submissions');
-      try {
-        await addDoc(formRef, {
-          name: formData.name,
-          email: formData.email,
-          message: formData.message,
-          createdAt: serverTimestamp(),
-          userId: auth.currentUser?.uid || 'anonymous'
-        });
-      } catch (error) {
-        handleFirestoreError(error, OperationType.CREATE, 'artifacts/react_app/public/data/submissions');
-      }
+      const templateParams = {
+        name: formData.name,
+        email: formData.email,
+        message: formData.message,
+      };
 
-      // Stuur ook een email via FormSubmit AJAX
-      try {
-        await fetch("https://formsubmit.co/ajax/martin.nieuweadem@gmail.com", {
-          method: "POST",
-          headers: { 
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            message: formData.message,
-            _subject: `Nieuw bericht van ${formData.name} via website`
-          })
-        });
-      } catch (emailError) {
-        console.error("E-mail verzenden mislukt:", emailError);
-      }
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        templateParams,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
       
       showToast('Bedankt voor je bericht! Ik neem zo spoedig mogelijk contact met u op.', 'success');
       setFormData({ name: '', email: '', message: '' });
@@ -1121,7 +1103,7 @@ const CTA = () => {
     );
   };
 
-const Footer = ({ onAdminClick }: { onAdminClick: () => void }) => {
+const Footer = () => {
   return (
     <footer className="bg-charcoal text-white py-20 border-t border-charcoal/30">
       <div className="max-w-7xl mx-auto px-6 md:px-12 grid md:grid-cols-4 gap-12">
@@ -1191,124 +1173,12 @@ const Footer = ({ onAdminClick }: { onAdminClick: () => void }) => {
         <div className="flex space-x-8 mt-6 md:mt-0 items-center">
           <a href="#" className="hover:text-powder-blue transition-colors">Privacy</a>
           <a href="#" className="hover:text-powder-blue transition-colors">Voorwaarden</a>
-          <button onClick={onAdminClick} className="hover:text-powder-blue transition-colors ml-4 focus:outline-none">Admin</button>
         </div>
       </div>
     </footer>
   );
 };
 
-const AdminDashboard = ({ onClose }: { onClose: () => void }) => {
-  const [password, setPassword] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [submissions, setSubmissions] = useState<any[]>([]);
-
-  useEffect(() => {
-    let unsubscribe: () => void;
-    if (isAuthenticated) {
-      signInAnonymous().then(() => {
-        const q = query(collection(db, 'artifacts/react_app/public/data/submissions'), orderBy('createdAt', 'desc'));
-        unsubscribe = onSnapshot(q, (snapshot) => {
-          setSubmissions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-        }, (error) => {
-          handleFirestoreError(error, OperationType.LIST, 'artifacts/react_app/public/data/submissions');
-        });
-      }).catch(err => {
-         console.error('Failed to sign in anonymously in admin dashboard', err);
-      });
-    }
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
-  }, [isAuthenticated]);
-
-  const handleDelete = async (id: string) => {
-    if (window.confirm('Weet u zeker dat u dit bericht wilt verwijderen?')) {
-      try {
-        await deleteDoc(doc(db, 'artifacts/react_app/public/data/submissions', id));
-      } catch (error) {
-        handleFirestoreError(error, OperationType.DELETE, `artifacts/react_app/public/data/submissions/${id}`);
-      }
-    }
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="fixed inset-0 z-[200] bg-charcoal/90 backdrop-blur-md flex items-center justify-center p-6">
-        <div className="bg-white rounded-3xl p-8 max-w-sm w-full relative shadow-xl">
-          <button onClick={onClose} className="absolute top-4 right-4 text-text-dark/50 hover:text-text-dark">
-            <X size={24} />
-          </button>
-          <h2 className="text-2xl font-medium text-text-dark mb-6">Admin Login</h2>
-          <input
-            type="password"
-            placeholder="Wachtwoord"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-5 py-4 rounded-2xl border border-soft-lavender/50 mb-4 focus:outline-none focus:ring-2 focus:ring-powder-blue/40 bg-white"
-          />
-          <button
-            onClick={() => { if (password === 'admin') setIsAuthenticated(true); else alert('Incorrect wachtwoord'); }}
-            className="w-full py-4 bg-leaf-green text-white rounded-2xl font-medium hover:bg-leaf-green/90 transition-colors"
-          >
-            Inloggen
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="fixed inset-0 z-[200] bg-bg-base overflow-y-auto">
-      <div className="max-w-7xl mx-auto px-6 py-12 relative animate-fade-in">
-        <div className="flex justify-between items-center mb-12">
-          <h1 className="text-3xl font-bold text-powder-blue">Berichten Dashboard</h1>
-          <button onClick={onClose} className="px-6 py-3 bg-white text-text-dark rounded-full font-medium shadow-sm hover:shadow-md transition-shadow flex items-center gap-2">
-            <X size={18} /> Sluiten
-          </button>
-        </div>
-        
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl p-8 overflow-hidden shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-soft-lavender/30 text-text-dark/60">
-                  <th className="py-4 font-medium">Datum</th>
-                  <th className="py-4 font-medium">Naam</th>
-                  <th className="py-4 font-medium">E-mail</th>
-                  <th className="py-4 font-medium">Bericht</th>
-                  <th className="py-4 font-medium text-right">Acties</th>
-                </tr>
-              </thead>
-              <tbody>
-                {submissions.map((sub) => (
-                  <tr key={sub.id} className="border-b border-soft-lavender/20 last:border-0 hover:bg-white/50 transition-colors">
-                    <td className="py-4 text-text-dark/80 whitespace-nowrap align-top pr-4">
-                      {sub.createdAt?.toDate ? sub.createdAt.toDate().toLocaleString('nl-NL') : 'N/A'}
-                    </td>
-                    <td className="py-4 text-text-dark font-medium align-top pr-4">{sub.name}</td>
-                    <td className="py-4 text-text-dark/80 align-top pr-4"><a href={`mailto:${sub.email}`} className="text-powder-blue hover:underline">{sub.email}</a></td>
-                    <td className="py-4 text-text-dark/80 max-w-md w-full align-top break-words whitespace-pre-wrap">{sub.message}</td>
-                    <td className="py-4 text-right align-top">
-                      <button onClick={() => handleDelete(sub.id)} className="text-red-400 hover:text-red-600 transition-colors p-2" title="Verwijderen">
-                        <XCircle size={20} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-                {submissions.length === 0 && (
-                  <tr>
-                    <td colSpan={5} className="py-8 text-center text-text-dark/50">Geen berichten gevonden.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const RealityJourney = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -1442,8 +1312,6 @@ const FloatingSocials = () => {
 };
 
 export default function App() {
-  const [showAdmin, setShowAdmin] = useState(false);
-
   return (
     <div className="min-h-screen font-sans bg-bg-base selection:bg-soft-lavender selection:text-text-dark">
       <Navbar />
@@ -1457,9 +1325,8 @@ export default function App() {
         <FAQ />
         <CTA />
       </main>
-      <Footer onAdminClick={() => setShowAdmin(true)} />
+      <Footer />
       <FloatingSocials />
-      {showAdmin && <AdminDashboard onClose={() => setShowAdmin(false)} />}
     </div>
   );
 }
