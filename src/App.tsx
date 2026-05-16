@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle, Calendar, Instagram, ChevronLeft, ChevronRight, Quote, Phone, Mail, AtSign } from 'lucide-react';
 import { db, auth, signInAnonymous, handleFirestoreError, OperationType } from './firebase';
@@ -656,11 +656,68 @@ const Agenda = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch('/api/calendar');
-        if (!response.ok) {
-          throw new Error(`Server returned ${response.status} for calendar fetching.`);
+        const icsUrl = 'https://calendar.google.com/calendar/ical/martin.nieuweadem%40gmail.com/public/basic.ics';
+        
+        const proxies = [
+          {
+            url: `https://api.allorigins.win/get?url=${encodeURIComponent(icsUrl)}`,
+            isJson: true
+          },
+          {
+            url: `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(icsUrl)}`,
+            isJson: false
+          }
+        ];
+
+        let data = '';
+        let success = false;
+
+        const fetchWithTimeout = async (url: string, timeout = 6000) => {
+          const controller = new AbortController();
+          const id = setTimeout(() => controller.abort(), timeout);
+          try {
+            const response = await fetch(url, { signal: controller.signal });
+            clearTimeout(id);
+            return response;
+          } catch (error) {
+            clearTimeout(id);
+            throw error;
+          }
+        };
+
+        for (const proxy of proxies) {
+          try {
+            const response = await fetchWithTimeout(proxy.url);
+            if (response.ok) {
+              const text = await response.text();
+              
+              if (proxy.isJson) {
+                try {
+                  const json = JSON.parse(text);
+                  if (json.contents && json.contents.includes('BEGIN:VCALENDAR')) {
+                    data = json.contents;
+                    success = true;
+                    break;
+                  }
+                } catch (jsonError) {
+                  // Ignore JSON parse errors
+                }
+              } else {
+                if (text.includes('BEGIN:VCALENDAR')) {
+                  data = text;
+                  success = true;
+                  break;
+                }
+              }
+            }
+          } catch (e) {
+            console.warn(`Proxy failed: ${proxy.url}`);
+          }
         }
-        const data = await response.text();
+
+        if (!success) {
+          throw new Error('All proxies failed to fetch the calendar');
+        }
         
         const parsedEvents = parseICS(data);
         const now = new Date();
@@ -888,7 +945,8 @@ const CTA = () => {
     type: 'success'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formData, setFormData] = useState({ user_name: '', user_email: '', subject: 'Nieuw bericht', message: '' });
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     signInAnonymous();
@@ -908,7 +966,7 @@ const CTA = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) return;
+    if (!formData.user_name || !formData.user_email || !formData.message) return;
     
     setIsSubmitting(true);
     try {
@@ -916,21 +974,17 @@ const CTA = () => {
         throw new Error('EmailJS configuratie mist. Zorg ervoor dat de VITE_EMAILJS_ variabelen zijn ingesteld.');
       }
       
-      const templateParams = {
-        name: formData.name,
-        email: formData.email,
-        message: formData.message,
-      };
+      if (!formRef.current) return;
 
-      await emailjs.send(
+      await emailjs.sendForm(
         import.meta.env.VITE_EMAILJS_SERVICE_ID,
         import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-        templateParams,
+        formRef.current,
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY
       );
       
       showToast('Bedankt voor je bericht! Ik neem zo spoedig mogelijk contact met u op.', 'success');
-      setFormData({ name: '', email: '', message: '' });
+      setFormData({ user_name: '', user_email: '', subject: 'Nieuw bericht', message: '' });
     } catch (error: any) {
       console.error('Submission error:', error);
       showToast('Er is iets misgegaan. Probeer het later opnieuw.', 'error');
@@ -979,16 +1033,17 @@ const CTA = () => {
 
           <div id="contact-form" className="max-w-xl mx-auto scroll-mt-24">
             <form 
+              ref={formRef}
               onSubmit={handleSubmit}
               className="bg-white/60 backdrop-blur-md p-8 md:p-10 rounded-[2rem] border border-white/60 shadow-xl text-left"
             >
                 <div className="mb-6">
-                  <label htmlFor="name" className="block text-text-dark/80 font-medium mb-2 ml-1">Naam</label>
+                  <label htmlFor="user_name" className="block text-text-dark/80 font-medium mb-2 ml-1">Naam</label>
                   <input 
                     type="text" 
-                    id="name" 
-                    name="name"
-                    value={formData.name}
+                    id="user_name" 
+                    name="user_name"
+                    value={formData.user_name}
                     onChange={handleInputChange}
                     className="w-full px-5 py-4 rounded-2xl border border-soft-lavender/50 bg-white/70 focus:outline-none focus:ring-2 focus:ring-powder-blue/40 focus:border-powder-blue transition-all placeholder:text-text-dark/30"
                     placeholder="Jouw naam"
@@ -997,12 +1052,12 @@ const CTA = () => {
                   />
                 </div>
                 <div className="mb-6">
-                  <label htmlFor="email" className="block text-text-dark/80 font-medium mb-2 ml-1">E-mailadres</label>
+                  <label htmlFor="user_email" className="block text-text-dark/80 font-medium mb-2 ml-1">E-mailadres</label>
                   <input 
                     type="email" 
-                    id="email" 
-                    name="email"
-                    value={formData.email}
+                    id="user_email" 
+                    name="user_email"
+                    value={formData.user_email}
                     onChange={handleInputChange}
                     className="w-full px-5 py-4 rounded-2xl border border-soft-lavender/50 bg-white/70 focus:outline-none focus:ring-2 focus:ring-powder-blue/40 focus:border-powder-blue transition-all placeholder:text-text-dark/30"
                     placeholder="jouw@email.nl"
@@ -1010,6 +1065,7 @@ const CTA = () => {
                     disabled={isSubmitting}
                   />
                 </div>
+                <input type="hidden" name="subject" value={formData.subject} />
                 <div className="mb-8">
                   <label htmlFor="message" className="block text-text-dark/80 font-medium mb-2 ml-1">Je bericht</label>
                   <textarea 
