@@ -656,68 +656,11 @@ const Agenda = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const icsUrl = 'https://calendar.google.com/calendar/ical/martin.nieuweadem%40gmail.com/public/basic.ics';
-        
-        const proxies = [
-          {
-            url: `https://api.allorigins.win/get?url=${encodeURIComponent(icsUrl)}`,
-            isJson: true
-          },
-          {
-            url: `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(icsUrl)}`,
-            isJson: false
-          }
-        ];
-
-        let data = '';
-        let success = false;
-
-        const fetchWithTimeout = async (url: string, timeout = 6000) => {
-          const controller = new AbortController();
-          const id = setTimeout(() => controller.abort(), timeout);
-          try {
-            const response = await fetch(url, { signal: controller.signal });
-            clearTimeout(id);
-            return response;
-          } catch (error) {
-            clearTimeout(id);
-            throw error;
-          }
-        };
-
-        for (const proxy of proxies) {
-          try {
-            const response = await fetchWithTimeout(proxy.url);
-            if (response.ok) {
-              const text = await response.text();
-              
-              if (proxy.isJson) {
-                try {
-                  const json = JSON.parse(text);
-                  if (json.contents && json.contents.includes('BEGIN:VCALENDAR')) {
-                    data = json.contents;
-                    success = true;
-                    break;
-                  }
-                } catch (jsonError) {
-                  // Ignore JSON parse errors
-                }
-              } else {
-                if (text.includes('BEGIN:VCALENDAR')) {
-                  data = text;
-                  success = true;
-                  break;
-                }
-              }
-            }
-          } catch (e) {
-            console.warn(`Proxy failed: ${proxy.url}`);
-          }
+        const response = await fetch('/api/calendar');
+        if (!response.ok) {
+          throw new Error(`Server returned ${response.status} for calendar fetching.`);
         }
-
-        if (!success) {
-          throw new Error('All proxies failed to fetch the calendar');
-        }
+        const data = await response.text();
         
         const parsedEvents = parseICS(data);
         const now = new Date();
