@@ -949,7 +949,7 @@ const CTA = () => {
     type: 'success'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({ user_name: '', user_email: '', subject: 'Nieuw bericht', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', subject: 'Nieuw bericht', message: '' });
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -970,7 +970,7 @@ const CTA = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.user_name || !formData.user_email || !formData.message) return;
+    if (!formData.name || !formData.email || !formData.message) return;
     
     setIsSubmitting(true);
     try {
@@ -992,7 +992,7 @@ const CTA = () => {
       );
       
       showToast('Bedankt voor je bericht! Ik neem zo spoedig mogelijk contact met u op.', 'success');
-      setFormData({ user_name: '', user_email: '', subject: 'Nieuw bericht', message: '' });
+      setFormData({ name: '', email: '', subject: 'Nieuw bericht', message: '' });
     } catch (error: any) {
       console.error('Submission error:', error);
       showToast('Er is iets misgegaan. Probeer het later opnieuw.', 'error');
@@ -1046,12 +1046,12 @@ const CTA = () => {
               className="bg-white/60 backdrop-blur-md p-8 md:p-10 rounded-[2rem] border border-white/60 shadow-xl text-left"
             >
                 <div className="mb-6">
-                  <label htmlFor="user_name" className="block text-text-dark/80 font-medium mb-2 ml-1">Naam</label>
+                  <label htmlFor="name" className="block text-text-dark/80 font-medium mb-2 ml-1">Naam</label>
                   <input 
                     type="text" 
-                    id="user_name" 
-                    name="user_name"
-                    value={formData.user_name}
+                    id="name" 
+                    name="name"
+                    value={formData.name}
                     onChange={handleInputChange}
                     className="w-full px-5 py-4 rounded-2xl border border-soft-lavender/50 bg-white/70 focus:outline-none focus:ring-2 focus:ring-powder-blue/40 focus:border-powder-blue transition-all placeholder:text-text-dark/30"
                     placeholder="Jouw naam"
@@ -1060,12 +1060,12 @@ const CTA = () => {
                   />
                 </div>
                 <div className="mb-6">
-                  <label htmlFor="user_email" className="block text-text-dark/80 font-medium mb-2 ml-1">E-mailadres</label>
+                  <label htmlFor="email" className="block text-text-dark/80 font-medium mb-2 ml-1">E-mailadres</label>
                   <input 
                     type="email" 
-                    id="user_email" 
-                    name="user_email"
-                    value={formData.user_email}
+                    id="email" 
+                    name="email"
+                    value={formData.email}
                     onChange={handleInputChange}
                     className="w-full px-5 py-4 rounded-2xl border border-soft-lavender/50 bg-white/70 focus:outline-none focus:ring-2 focus:ring-powder-blue/40 focus:border-powder-blue transition-all placeholder:text-text-dark/30"
                     placeholder="jouw@email.nl"
