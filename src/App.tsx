@@ -660,12 +660,16 @@ const Agenda = () => {
         
         const proxies = [
           {
-            url: `https://api.allorigins.win/get?url=${encodeURIComponent(icsUrl)}`,
-            isJson: true
+            url: `https://corsproxy.io/?${encodeURIComponent(icsUrl)}`,
+            isJson: false
           },
           {
             url: `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(icsUrl)}`,
             isJson: false
+          },
+          {
+            url: `https://api.allorigins.win/get?url=${encodeURIComponent(icsUrl)}`,
+            isJson: true
           }
         ];
 
@@ -970,17 +974,21 @@ const CTA = () => {
     
     setIsSubmitting(true);
     try {
-      if (!import.meta.env.VITE_EMAILJS_SERVICE_ID || !import.meta.env.VITE_EMAILJS_TEMPLATE_ID || !import.meta.env.VITE_EMAILJS_PUBLIC_KEY) {
-        throw new Error('EmailJS configuratie mist. Zorg ervoor dat de VITE_EMAILJS_ variabelen zijn ingesteld.');
+      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_fjxk3t7';
+      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_6boj6lk';
+      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || '6DAm-rgSiGI9l5MU-';
+
+      if (!serviceId || !templateId || !publicKey) {
+        throw new Error('EmailJS configuratie mist.');
       }
       
       if (!formRef.current) return;
 
       await emailjs.sendForm(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        serviceId,
+        templateId,
         formRef.current,
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+        publicKey
       );
       
       showToast('Bedankt voor je bericht! Ik neem zo spoedig mogelijk contact met u op.', 'success');
