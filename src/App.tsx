@@ -121,7 +121,53 @@ const Navbar = () => {
   );
 };
 
+const ImageSlideshow = ({ images }: { images: string[] }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (images.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % images.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [images]);
+
+  return (
+    <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-xl">
+      <AnimatePresence mode="wait">
+        <motion.img
+          key={currentIndex}
+          src={images[currentIndex]}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.9 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1 }}
+          className="object-cover w-full h-full absolute inset-0"
+          alt={`Praktijkruimte slide ${currentIndex + 1}`}
+          referrerPolicy="no-referrer"
+        />
+      </AnimatePresence>
+    </div>
+  );
+};
+
 const Hero = () => {
+  const heroImages = [
+    "https://i.ibb.co/99p59PJW/IMG-20260515-142332aang.jpg",
+    "https://i.ibb.co/Cp5Bh1zH/IMG-20260515-142531aang.jpg",
+    "https://i.ibb.co/R4BBkvQx/IMG-20260515-142622aang.jpg",
+    "https://i.ibb.co/chNDxFPF/IMG-20260515-142939aang.jpg",
+    "https://i.ibb.co/wNhXLLSw/IMG-20260515-142957aang.jpg",
+    "https://i.ibb.co/YBQLGvFv/IMG-20260515-143010aang.jpg",
+    "https://i.ibb.co/Dh8FJpd/IMG-20260515-143335aang.jpg",
+    "https://i.ibb.co/cXTj6JZs/IMG-20260515-143343aang.jpg",
+    "https://i.ibb.co/PZbCFrgF/IMG-20260515-143353aang.jpg",
+    "https://i.ibb.co/tM3D5nmZ/IMG-20260515-143404aang.jpg",
+    "https://i.ibb.co/hJs4W3S7/IMG-20260515-145604aang.jpg",
+    "https://i.ibb.co/b5MRxbYL/IMG-20260515-145855aang.jpg",
+    "https://i.ibb.co/PGSXTrB1/IMG-20260515-145916aang.jpg"
+  ];
+
   return (
     <section className="relative min-h-screen flex items-center pt-32 pb-20 overflow-hidden bg-bg-base">
       {/* Soft decorative background elements */}
@@ -163,12 +209,7 @@ const Hero = () => {
           transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
           className="relative mt-8 md:mt-0 h-[350px] md:h-auto"
         >
-          <img
-            src="https://i.ibb.co/sJpDDNyY/plant4.jpg"
-            alt="Rustgevende plant"
-            className="rounded-[2.5rem] shadow-xl object-cover w-full h-full opacity-90 absolute inset-0"
-            referrerPolicy="no-referrer"
-          />
+          <ImageSlideshow images={heroImages} />
         </motion.div>
       </div>
       </div>
