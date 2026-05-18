@@ -7,6 +7,21 @@ import emailjs from '@emailjs/browser';
 
 // --- Components ---
 
+const AnnouncementBar = () => {
+  return (
+    <a href="#methode" className="block bg-[#7B8B77] text-white py-3 px-4 shadow-md relative z-50 overflow-hidden group border-b border-white/20 hover:bg-[#6A7866] transition-colors cursor-pointer">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center relative gap-1 md:gap-2">
+        <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
+        <p className="text-center text-sm md:text-base font-medium relative z-10 font-sans tracking-wide">
+          <span className="font-bold uppercase tracking-wider md:mr-2 text-[#E2E8F0] block md:inline">Tijdelijke aanbieding Pinksteren:</span>
+          Nu 60,- euro voor een ademsessie i.p.v. 79,50 euro <span className="hidden md:inline mx-2 opacity-50">|</span> <span className="inline md:hidden"><br/></span>
+          <span className="font-semibold">Adempakket Individueel + 1 extra gratis Ademsessie</span>
+        </p>
+      </div>
+    </a>
+  );
+};
+
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -29,12 +44,14 @@ const Navbar = () => {
   ];
 
   return (
-    <nav
-      className={`fixed w-full z-50 transition-all duration-500 ${
-        isScrolled ? 'bg-white/80 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-8'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
+    <header className="fixed w-full z-50 top-0">
+      <AnnouncementBar />
+      <nav
+        className={`w-full transition-all duration-500 ${
+          isScrolled ? 'bg-white/80 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-8'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
         <a 
           href="#" 
           className="flex items-center gap-3"
@@ -117,7 +134,42 @@ const Navbar = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+      </nav>
+    </header>
+  );
+};
+
+const SlideImage = ({ src, alt, priority }: { src: string, alt: string, priority: boolean }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  return (
+    <div className="absolute inset-0 w-full h-full overflow-hidden bg-powder-blue/10">
+      {/* Blurred background layer using the same image */}
+      {isLoaded && (
+        <img
+          src={src}
+          alt=""
+          loading={priority ? "eager" : "lazy"}
+          className="absolute inset-0 object-cover w-full h-full scale-125 blur-2xl opacity-40 transition-opacity duration-1000"
+          referrerPolicy="no-referrer"
+        />
+      )}
+      
+      {!isLoaded && (
+        <div className="absolute inset-0 flex items-center justify-center bg-soft-lavender/30 animate-pulse">
+        </div>
+      )}
+      
+      {/* Main Foreground Image */}
+      <img
+        src={src}
+        alt={alt}
+        onLoad={() => setIsLoaded(true)}
+        loading={priority ? "eager" : "lazy"}
+        className={`relative z-10 object-contain w-full h-full transition-all duration-700 ${isLoaded ? 'opacity-100 blur-none scale-100' : 'opacity-0 blur-md scale-95'}`}
+        referrerPolicy="no-referrer"
+      />
+    </div>
   );
 };
 
@@ -132,20 +184,32 @@ const ImageSlideshow = ({ images }: { images: string[] }) => {
     return () => clearInterval(interval);
   }, [images]);
 
+  // Preload next image
+  useEffect(() => {
+    if (images.length > 1) {
+      const nextIndex = (currentIndex + 1) % images.length;
+      const img = new Image();
+      img.src = images[nextIndex];
+    }
+  }, [currentIndex, images]);
+
   return (
-    <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-xl">
+    <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-xl bg-powder-blue/20">
       <AnimatePresence mode="wait">
-        <motion.img
+        <motion.div
           key={currentIndex}
-          src={images[currentIndex]}
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.9 }}
+          animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1 }}
-          className="object-cover w-full h-full absolute inset-0"
-          alt={`Praktijkruimte slide ${currentIndex + 1}`}
-          referrerPolicy="no-referrer"
-        />
+          className="absolute inset-0"
+        >
+          <SlideImage 
+            src={images[currentIndex]} 
+            alt={`Praktijkruimte slide ${currentIndex + 1}`} 
+            priority={currentIndex === 0}
+          />
+        </motion.div>
       </AnimatePresence>
     </div>
   );
@@ -207,7 +271,7 @@ const Hero = () => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
-          className="relative mt-8 md:mt-0 h-[350px] md:h-auto"
+          className="relative mt-8 md:mt-0 h-[400px] md:h-auto md:min-h-[550px] w-full"
         >
           <ImageSlideshow images={heroImages} />
         </motion.div>
@@ -323,7 +387,12 @@ const Aanbod = () => {
           {[
             {
               title: "Ademsessie Individueel",
-              price: "€ 79,50",
+              price: (
+                <div className="flex flex-col items-center justify-between gap-1 h-[84px]">
+                  <span className="line-through text-text-dark/40 text-2xl font-light">€ 79,50</span>
+                  <span className="text-[#E25C58] opacity-90 font-bold">€ 60,00</span>
+                </div>
+              ),
               details: [
                 { icon: <User size={18} />, text: "1 ademsessie" },
                 { icon: <MapPin size={18} />, text: "Locatie: Bergen op Zoom" },
@@ -331,11 +400,16 @@ const Aanbod = () => {
                 { icon: <MessageCircle size={18} />, text: "+ intakegesprek" }
               ],
               buttonText: "Neem contact op",
-              popular: false
+              popular: true
             },
             {
               title: "Adempakket Individueel",
-              price: "€ 299,00",
+              price: (
+                <div className="flex flex-col items-center justify-between gap-1 h-[84px]">
+                  <span>€ 299,00</span>
+                  <span className="text-[#E25C58] opacity-90 font-bold text-xl uppercase tracking-wider">4 + 1 Gratis</span>
+                </div>
+              ),
               details: [
                 { icon: <User size={18} />, text: "4 ademsessies" },
                 { icon: <MapPin size={18} />, text: "Locatie: Bergen op Zoom" },
@@ -347,7 +421,7 @@ const Aanbod = () => {
             },
             {
               title: "Ademsessie Duo",
-              price: "€ 139,00",
+              price: <div className="flex items-center justify-center h-[84px]">€ 139,00</div>,
               details: [
                 { icon: <Users size={18} />, text: "1 sessie voor 2 personen" },
                 { icon: <MapPin size={18} />, text: "Locatie: Bergen op Zoom" },
@@ -359,7 +433,7 @@ const Aanbod = () => {
             },
             {
               title: "Ademcirkel",
-              price: "Zie agenda",
+              price: <div className="flex items-center justify-center h-[84px]">Zie agenda</div>,
               priceSubtext: undefined,
               details: [
                 { icon: <Users size={18} />, text: "Sessie: groep" },
@@ -384,9 +458,9 @@ const Aanbod = () => {
               )}
               
               <h3 className="text-2xl font-medium text-text-dark mb-2">{item.title}</h3>
-              <div className="mb-8">
-                <span className="text-4xl font-medium text-powder-blue">{item.price}</span>
-                {item.priceSubtext && <span className="text-text-dark/60 ml-2 text-sm">{item.priceSubtext}</span>}
+              <div className="mb-8 flex justify-center items-end gap-2">
+                <div className="text-4xl font-medium text-powder-blue">{item.price}</div>
+                {item.priceSubtext && <span className="text-text-dark/60 text-sm mb-2">{item.priceSubtext}</span>}
               </div>
               
               <ul className="space-y-4 mb-10 flex-grow">
