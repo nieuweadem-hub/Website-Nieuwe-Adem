@@ -252,7 +252,7 @@ const Hero = () => {
           </div>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-16 items-stretch">
+        <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -271,7 +271,7 @@ const Hero = () => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
-          className="relative mt-8 md:mt-0 h-[400px] md:h-auto md:min-h-[550px] w-full"
+          className="relative mt-4 md:mt-0 h-[400px] md:h-[480px] w-full md:w-[90%] lg:w-[85%] mx-auto md:ml-auto"
         >
           <ImageSlideshow images={heroImages} />
         </motion.div>
@@ -311,7 +311,7 @@ const About = () => {
               Ik ben Martin, mijn eigen reis met ademwerk begon vanuit een zoektocht naar een betere balans tussen mijn werk en privéleven. Pas toen ik zelf een verbonden ademhalingssessie ontving, ervaarde ik de werkelijke kracht en helende potentie van de adem. Die ervaring was zo’n eye-opener dat ik besloot het eigen te maken en nadat ik mijn opleiding bij het Ruach ademcentrum had afgerond, deze kennis door gaan geven.
             </p>
             <p>
-              Naast mijn werk als gecertificeerd ademcoach ben ik werkzaam als Persoonlijk Begeleider in de gehandicaptenzorg. Het begeleiden van mensen zit in mijn natuur; ik ben geduldig, rustig en empathisch. Tijdens mijn ademsessies creëer ik een veilige bedding waarin ik werk met zachtheid, lichte aanraking, drukpunten, muziek, geluid en energie.
+              Naast mijn werk als gecertificeerd ademcoach ben ik werkzaam als <a href="https://www.sdw.nl/over-sdw/ervaringen/stap-voor-stap-krijgt-michael-zijn-leven-terug" target="_blank" rel="noopener noreferrer" className="underline hover:text-powder-blue transition-colors relative z-10">Persoonlijk Begeleider in de gehandicaptenzorg.</a> Het begeleiden van mensen zit in mijn natuur; ik ben geduldig, rustig en empathisch. Tijdens mijn ademsessies creëer ik een veilige bedding waarin ik werk met zachtheid, lichte aanraking, drukpunten, muziek, geluid en energie.
             </p>
           </div>
         </div>
