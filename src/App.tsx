@@ -513,7 +513,10 @@ const Benefits = () => {
   };
 
   return (
-    <section id="resultaten" className="py-32 bg-bg-base relative overflow-hidden">
+    <section id="resultaten" className="py-32 bg-cover bg-fixed bg-center relative overflow-hidden" style={{ backgroundImage: "url('https://i.ibb.co/nN7J4mM2/pad1.jpg')" }}>
+      {/* Overlay to ensure text readability */}
+      <div className="absolute inset-0 bg-bg-base/60"></div>
+      
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
         <div className="max-w-3xl mx-auto mb-24">
           <motion.div
@@ -1333,7 +1336,10 @@ const RealityJourney = () => {
   ];
 
   return (
-    <section className="py-20 bg-bg-base relative overflow-hidden" id="reality-journey">
+    <section className="py-20 bg-cover bg-fixed bg-center relative overflow-hidden" id="reality-journey" style={{ backgroundImage: "url('https://i.ibb.co/23CPqTkK/bos-water2.png')" }}>
+      {/* Overlay to ensure text readability, keeping the soft feel */}
+      <div className="absolute inset-0 bg-bg-base/60"></div>
+
       {/* Decorative background circle */}
       <div className="absolute top-1/2 left-[-10%] w-[40vw] h-[40vw] -translate-y-1/2 rounded-full bg-soft-lavender/30 blur-[100px] pointer-events-none"></div>
       
