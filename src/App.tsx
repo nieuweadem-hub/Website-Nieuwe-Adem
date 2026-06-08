@@ -423,7 +423,7 @@ const Aanbod = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ delay: i * 0.2, duration: 0.6 }}
-              className={`relative bg-bg-base p-10 rounded-[2rem] border ${item.popular ? 'border-leaf-green shadow-lg hover:scale-105' : 'border-transparent'} hover:border-soft-lavender hover:bg-soft-lavender/10 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-powder-blue/20 flex flex-col h-full text-center`}
+              className={`relative bg-bg-base/40 backdrop-blur-md p-10 rounded-[2rem] border ${item.popular ? 'border-leaf-green/50 shadow-lg' : 'border-white/30'} hover:border-soft-lavender hover:bg-white transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-powder-blue/20 flex flex-col h-full text-center`}
             >
               {item.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-leaf-green text-white px-4 py-1 rounded-full text-sm font-medium tracking-wide">
@@ -534,7 +534,7 @@ const Benefits = () => {
                   desc: "De techniek verlaagt de drempel naar het onderbewustzijn, waardoor u bewuster wordt van lichamelijke sensaties en opgeslagen emoties. Dit vergroot het zelfbewustzijn en leert u te luisteren naar de subtiele signalen van uw lichaam. Deze versterkte verbinding met uw eigen kern helpt om meer te vertrouwen op uw innerlijk weten en intuïtie."
                 }
               ].map((benefit, i) => (
-                <div key={i} className="flex gap-6 group p-6 rounded-[2rem] border border-transparent hover:border-soft-lavender/50 hover:bg-white hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <div key={i} className="flex gap-6 group p-6 rounded-[2rem] bg-white/75 backdrop-blur-sm border border-white/40 shadow-sm hover:border-soft-lavender/50 hover:bg-white hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                   <div className="flex-shrink-0 w-12 h-12 rounded-full bg-leaf-green flex items-center justify-center mt-1 group-hover:bg-leaf-green/90 transition-colors duration-300">
                     <Wind size={24} className="text-white" />
                   </div>
@@ -748,71 +748,13 @@ const Agenda = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const icsUrl = 'https://calendar.google.com/calendar/ical/martin.nieuweadem%40gmail.com/public/basic.ics';
-        
-        const proxies = [
-          {
-            url: `https://corsproxy.io/?${encodeURIComponent(icsUrl)}`,
-            isJson: false
-          },
-          {
-            url: `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(icsUrl)}`,
-            isJson: false
-          },
-          {
-            url: `https://api.allorigins.win/get?url=${encodeURIComponent(icsUrl)}`,
-            isJson: true
-          }
-        ];
-
-        let data = '';
-        let success = false;
-
-        const fetchWithTimeout = async (url: string, timeout = 6000) => {
-          const controller = new AbortController();
-          const id = setTimeout(() => controller.abort(), timeout);
-          try {
-            const response = await fetch(url, { signal: controller.signal });
-            clearTimeout(id);
-            return response;
-          } catch (error) {
-            clearTimeout(id);
-            throw error;
-          }
-        };
-
-        for (const proxy of proxies) {
-          try {
-            const response = await fetchWithTimeout(proxy.url);
-            if (response.ok) {
-              const text = await response.text();
-              
-              if (proxy.isJson) {
-                try {
-                  const json = JSON.parse(text);
-                  if (json.contents && json.contents.includes('BEGIN:VCALENDAR')) {
-                    data = json.contents;
-                    success = true;
-                    break;
-                  }
-                } catch (jsonError) {
-                  // Ignore JSON parse errors
-                }
-              } else {
-                if (text.includes('BEGIN:VCALENDAR')) {
-                  data = text;
-                  success = true;
-                  break;
-                }
-              }
-            }
-          } catch (e) {
-            console.warn(`Proxy failed: ${proxy.url}`);
-          }
+        const response = await fetch('/api/calendar');
+        if (!response.ok) {
+          throw new Error('Failed to fetch calendar from backend proxy');
         }
-
-        if (!success) {
-          throw new Error('All proxies failed to fetch the calendar');
+        const data = await response.text();
+        if (!data.includes('BEGIN:VCALENDAR')) {
+          throw new Error('Invalid calendar data format');
         }
         
         const parsedEvents = parseICS(data);
