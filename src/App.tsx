@@ -748,13 +748,86 @@ const Agenda = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch('/api/calendar');
-        if (!response.ok) {
-          throw new Error('Failed to fetch calendar from backend proxy');
+        let data = '';
+        let success = false;
+
+        // 1. Try local backend proxy first (ideal for full-stack build/Cloud Run)
+        try {
+          const response = await fetch('/api/calendar');
+          if (response.ok) {
+            const text = await response.text();
+            if (text.includes('BEGIN:VCALENDAR')) {
+              data = text;
+              success = true;
+            }
+          }
+        } catch (localError) {
+          console.warn('Backend proxy not reachable or failed, falling back to public CORS proxies:', localError);
         }
-        const data = await response.text();
-        if (!data.includes('BEGIN:VCALENDAR')) {
-          throw new Error('Invalid calendar data format');
+
+        // 2. Fallback to public client-side CORS proxies if backend proxy did not succeed
+        if (!success) {
+          const icsUrl = 'https://calendar.google.com/calendar/ical/martin.nieuweadem%40gmail.com/public/basic.ics';
+          const proxies = [
+            {
+              url: `https://corsproxy.io/?${encodeURIComponent(icsUrl)}`,
+              isJson: false
+            },
+            {
+              url: `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(icsUrl)}`,
+              isJson: false
+            },
+            {
+              url: `https://api.allorigins.win/get?url=${encodeURIComponent(icsUrl)}`,
+              isJson: true
+            }
+          ];
+
+          const fetchWithTimeout = async (url: string, timeout = 6000) => {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeout);
+            try {
+              const response = await fetch(url, { signal: controller.signal });
+              clearTimeout(id);
+              return response;
+            } catch (error) {
+              clearTimeout(id);
+              throw error;
+            }
+          };
+
+          for (const proxy of proxies) {
+            try {
+              const response = await fetchWithTimeout(proxy.url);
+              if (response.ok) {
+                const text = await response.text();
+                if (proxy.isJson) {
+                  try {
+                    const json = JSON.parse(text);
+                    if (json.contents && json.contents.includes('BEGIN:VCALENDAR')) {
+                      data = json.contents;
+                      success = true;
+                      break;
+                    }
+                  } catch (jsonError) {
+                    // Ignore JSON parsing error and try the next proxy
+                  }
+                } else {
+                  if (text.includes('BEGIN:VCALENDAR')) {
+                    data = text;
+                    success = true;
+                    break;
+                  }
+                }
+              }
+            } catch (proxyError) {
+              console.warn(`Proxy failed: ${proxy.url}`, proxyError);
+            }
+          }
+        }
+
+        if (!success || !data) {
+          throw new Error('All calendar fetch attempts failed.');
         }
         
         const parsedEvents = parseICS(data);
