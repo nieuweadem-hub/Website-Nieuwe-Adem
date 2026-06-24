@@ -470,6 +470,42 @@ const Aanbod = () => {
 
 const Benefits = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
+  const [visibleReviewCount, setVisibleReviewCount] = useState(1);
+
+  const googleReviews = [
+    { name: "Inge Thoen", text: "Martin heeft kennis van zaken, zijn voorbereiding op de sessie heeft hij met mij van te voren uitgebreid doorgenomen. Tijdens de sessie voelde ik me erg op mijn gemak, zijn stem is heel prettig om naar te luisteren, wat maakte dat ik het als heel fijn en ontspannen heb ervaren." },
+    { name: "Remon Kleijn", text: "Martin is een fijn en rustig persoon. Hij begeleid je goed. En stelt je erg op je gemak. Ben normaal best gesloten. Maar tijdens de ademsessie kwamen er de nodige emoties los. Na de sessie wordt er veel aandacht gegeven. En voelde mij hierdoor erg ontspannen en opgelucht. Zitten er emoties vast. Zou ii de ademsessie erg aanraden." },
+    { name: "Francien Klap", text: "In 1 woord WOW!!! Als ik iets heel erg belangrijk vind is het wel je veilig voelen bij een therapeut! Ik heb bij Martin een liefdevolle, zachte en veilige bedding ervaren. Van het begin tot het eind van de sessie een goede uitleg gehad en een hele fijne begeleiding. Er kwam het nodige los en ik kijk nu al uit naar een volgende sessie! Al veel healing werk gedaan, en op dit moment brengt mij dit weer een stap verder en dichter naar mijn ware zelf. Dankjewel Martin ❤️" },
+    { name: "Sofie Stes", text: "De ademsessie was een mooie ervaring. Martin's begeleiding was rustig, ontspannen en professioneel. Aangename praktijkruimte. Zeker een aanrader." },
+    { name: "Brigitte Wensveen", text: "Als je een rustige ademcoach zoekt ben je bij Martin aan het goede adres. Martin is een echt mensenmens en neemt de tijd om een ontspannen omgeving te creëren waarin je je veilig kunt voelen. Hij begeleidt je vakkundig door de ademsessie en heeft oog voor wat er met je gebeurt en zegt op de juiste momenten de juiste dingen, zeker niet te veel maar ook niet te weinig. Na de ademsessie zat ik meer ontspannen in mijn lijf en was ik verbaasd hoeveel er los geademd was waarvan ik me niet eens bewust was dat het vastzat. Dank je wel Martin." },
+    { name: "Sabine", text: "Martin is een warm persoon die zich inleeft en een persoonlijke aanpak heeft. Hij legt goed uit wat je kunt verwachten en stemt muziek op wat voor jou het beste werkt tijdens de sessie. Er treedt van alles in werking en dat merk je in je lichaam. Maar nadien voel je letterlijk meer lucht en positiviteit." }
+  ];
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setVisibleReviewCount(3);
+      } else if (window.innerWidth >= 768) {
+        setVisibleReviewCount(2);
+      } else {
+        setVisibleReviewCount(1);
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const maxReviewIndex = Math.max(0, googleReviews.length - visibleReviewCount);
+
+  const nextReview = () => {
+    setCurrentReviewIndex((prev) => (prev >= maxReviewIndex ? 0 : prev + 1));
+  };
+
+  const prevReview = () => {
+    setCurrentReviewIndex((prev) => (prev === 0 ? maxReviewIndex : prev - 1));
+  };
 
   const testimonials = [
     { name: "Sander V.", text: "De sessie bij Martin was een openbaring. De onrust in mijn hoofd die ik al jaren voelde, was na één keer ademen een stuk minder. Hij stelt je enorm op je gemak." },
@@ -568,48 +604,89 @@ const Benefits = () => {
             </div>
           </div>
 
-          <div className="flex justify-center flex-wrap gap-6 mb-12">
-            {[
-              { name: "Inge Thoen", text: "Martin heeft kennis van zaken, zijn voorbereiding op de sessie heeft hij met mij van te voren uitgebreid doorgenomen. Tijdens de sessie voelde ik me erg op mijn gemak, zijn stem is heel prettig om naar te luisteren, wat maakte dat ik het als heel fijn en ontspannen heb ervaren." },
-              { name: "Remon Kleijn", text: "Martin is een fijn en rustig persoon. Hij begeleid je goed. En stelt je erg op je gemak. Ben normaal best gesloten. Maar tijdens de ademsessie kwamen er de nodige emoties los. Na de sessie wordt er veel aandacht gegeven. En voelde mij hierdoor erg ontspannen en opgelucht. Zitten er emoties vast. Zou ii de ademsessie erg aanraden." }
-            ].map((review, i) => (
+          <div className="relative max-w-6xl mx-auto px-4 md:px-12 mb-12">
+            <div className="overflow-hidden py-4">
               <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full cursor-default max-w-md w-full"
+                animate={{ x: `-${currentReviewIndex * (100 / visibleReviewCount)}%` }}
+                transition={{ type: "spring", stiffness: 180, damping: 24 }}
+                className="flex -mx-3"
               >
-                <div className="flex justify-between items-start mb-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#4285F4]/20 to-[#4285F4]/10 text-[#4285F4] flex items-center justify-center font-bold text-lg">
-                      {review.name.charAt(0)}
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-text-dark">{review.name}</h4>
-                      <p className="text-xs text-text-dark/50">Geverifieerde review</p>
+                {googleReviews.map((review, i) => (
+                  <div
+                    key={i}
+                    className="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-3 flex"
+                  >
+                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-full w-full cursor-default">
+                      <div>
+                        <div className="flex justify-between items-start mb-6">
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#4285F4]/20 to-[#4285F4]/10 text-[#4285F4] flex items-center justify-center font-bold text-lg">
+                              {review.name.charAt(0)}
+                            </div>
+                            <div>
+                              <h4 className="font-medium text-text-dark">{review.name}</h4>
+                              <p className="text-xs text-text-dark/50">Geverifieerde review</p>
+                            </div>
+                          </div>
+                          {/* Google 'G' Logo Placeholder */}
+                          <div className="w-6 h-6 flex-shrink-0">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                              <path d="M1 1h22v22H1z" fill="none" />
+                            </svg>
+                          </div>
+                        </div>
+                        <div className="flex text-[#FFC107] text-lg mb-4">
+                          ★★★★★
+                        </div>
+                        <p className="text-text-dark/70 font-light leading-relaxed flex-grow text-[15px]">
+                          "{review.text}"
+                        </p>
+                      </div>
                     </div>
                   </div>
-                  {/* Google 'G' Logo Placeholder */}
-                  <div className="w-6 h-6 flex-shrink-0">
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-                      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-                      <path d="M1 1h22v22H1z" fill="none" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="flex text-[#FFC107] text-lg mb-4">
-                  ★★★★★
-                </div>
-                <p className="text-text-dark/70 font-light leading-relaxed flex-grow text-[15px]">
-                  "{review.text}"
-                </p>
+                ))}
               </motion.div>
-            ))}
+            </div>
+
+            {/* Left and Right Navigation Buttons */}
+            {maxReviewIndex > 0 && (
+              <>
+                <button
+                  onClick={prevReview}
+                  className="absolute left-[-15px] md:left-[-25px] top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-lg border border-gray-100 flex items-center justify-center text-text-dark hover:text-powder-blue hover:scale-105 active:scale-95 transition-all duration-300 z-20"
+                  aria-label="Vorige review"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+                <button
+                  onClick={nextReview}
+                  className="absolute right-[-15px] md:right-[-25px] top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-lg border border-gray-100 flex items-center justify-center text-text-dark hover:text-powder-blue hover:scale-105 active:scale-95 transition-all duration-300 z-20"
+                  aria-label="Volgende review"
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </>
+            )}
+
+            {/* Dots Indicators */}
+            {maxReviewIndex > 0 && (
+              <div className="flex justify-center gap-2 mt-8">
+                {Array.from({ length: maxReviewIndex + 1 }).map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentReviewIndex(index)}
+                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                      currentReviewIndex === index ? 'bg-powder-blue w-6' : 'bg-powder-blue/30 hover:bg-powder-blue/60'
+                    }`}
+                    aria-label={`Ga naar slide ${index + 1}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-4">
@@ -1081,9 +1158,9 @@ const CTA = () => {
     
     setIsSubmitting(true);
     try {
-      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_fjxk3t7';
-      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_6boj6lk';
-      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || '6DAm-rgSiGI9l5MU-';
+      const serviceId = (import.meta as any).env?.VITE_EMAILJS_SERVICE_ID || 'service_fjxk3t7';
+      const templateId = (import.meta as any).env?.VITE_EMAILJS_TEMPLATE_ID || 'template_6boj6lk';
+      const publicKey = (import.meta as any).env?.VITE_EMAILJS_PUBLIC_KEY || '6DAm-rgSiGI9l5MU-';
 
       if (!serviceId || !templateId || !publicKey) {
         throw new Error('EmailJS configuratie mist.');
