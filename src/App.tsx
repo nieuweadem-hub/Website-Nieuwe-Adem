@@ -305,8 +305,6 @@ const About = () => {
 };
 
 const Aanbod = () => {
-  const [isGiftOpen, setIsGiftOpen] = useState(false);
-
   return (
     <section 
       id="methode" 
@@ -321,43 +319,6 @@ const Aanbod = () => {
             <h2 className="text-powder-blue font-bold tracking-widest uppercase text-xl md:text-3xl drop-shadow-sm text-center">
               Aanbod & Tarieven
             </h2>
-          </div>
-
-          <div className="relative z-40 flex flex-col items-center justify-center my-8">
-            <AnimatePresence>
-              {isGiftOpen && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.8, y: 10 }}
-                  className="bg-white p-5 rounded-2xl shadow-2xl border border-powder-blue/20 max-w-[280px] md:max-w-xs mb-4 relative z-50 text-left"
-                >
-                  <button 
-                    onClick={() => setIsGiftOpen(false)}
-                    className="absolute top-2 right-2 text-text-dark/40 hover:text-text-dark"
-                  >
-                    <X size={16} />
-                  </button>
-                  <div className="flex items-start gap-3">
-                    <span className="text-2xl mt-1">📱</span>
-                    <p className="text-sm font-medium text-text-dark/80 leading-relaxed pr-2">
-                      Iedere deelnemer ontvangt gratis een 'Adem App' met daarop extra ademtechnieken om thuis ook zelf te beoefenen.
-                    </p>
-                  </div>
-                  {/* Pointer arrow */}
-                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white transform rotate-45 border-b border-r border-powder-blue/20"></div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-            <motion.button
-              animate={!isGiftOpen ? { y: [0, -12, 0] } : {}}
-              transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
-              onClick={() => setIsGiftOpen(!isGiftOpen)}
-              className="text-6xl md:text-7xl drop-shadow-2xl hover:scale-110 transition-transform transform origin-bottom focus:outline-none"
-              title="Klik voor een kado!"
-            >
-              {isGiftOpen ? '🎉' : '🎁'}
-            </motion.button>
           </div>
 
           <div className="bg-white/70 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-xl border border-white/50 mt-8 mx-auto max-w-2xl">
