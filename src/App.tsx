@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle, Calendar, Instagram, ChevronLeft, ChevronRight, Quote, Phone, Mail, AtSign } from 'lucide-react';
+import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle, Calendar, Instagram, ChevronLeft, ChevronRight, Quote, Phone, Mail, AtSign, Sparkles } from 'lucide-react';
 import { db, auth, signInAnonymous, handleFirestoreError, OperationType } from './firebase';
 import { collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
 import emailjs from '@emailjs/browser';
@@ -311,28 +311,28 @@ const Aanbod = () => {
       className="py-32 relative bg-cover bg-center bg-fixed"
       style={{ backgroundImage: "url('https://i.ibb.co/wH3d65h/bos-water2.png')" }}
     >
-      <div className="absolute inset-0 bg-white/50 backdrop-blur-[3px]"></div>
+      <div className="absolute inset-0 bg-white/60 backdrop-blur-[4px]"></div>
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
         
         <div className="text-center max-w-3xl mx-auto mb-16 relative">
-          <div className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-white/60 border border-powder-blue/40 shadow-lg shadow-powder-blue/10 backdrop-blur-md mb-8">
+          <div className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-white/80 border border-powder-blue/40 shadow-lg shadow-powder-blue/10 backdrop-blur-md mb-8">
             <h2 className="text-powder-blue font-bold tracking-widest uppercase text-xl md:text-3xl drop-shadow-sm text-center">
               Aanbod & Tarieven
             </h2>
           </div>
 
-          <div className="bg-white/70 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-xl border border-white/50 mt-8 mx-auto max-w-2xl">
-            <p className="text-lg text-text-dark/80 font-light leading-relaxed">
+          <div className="bg-white/90 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-xl border border-white/80 mt-8 mx-auto max-w-2xl">
+            <p className="text-lg text-text-dark/90 font-light leading-relaxed">
               Kies de sessie die bij je past of vraag naar andere mogelijkheden. Of je nu een eerste stap wilt zetten of klaar bent voor een dieper traject, ik begeleid je graag op jouw pad naar meer rust en ruimte.
             </p>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {[
             {
               title: "Ademsessie Individueel",
-              price: <div className="flex items-center justify-center h-[84px]">€ 79,50</div>,
+              price: <div className="flex items-center justify-center h-[84px]">€ 80,00</div>,
               details: [
                 { icon: <User size={18} />, text: "1 ademsessie" },
                 { icon: <MapPin size={18} />, text: "Locatie: Bergen op Zoom" },
@@ -347,18 +347,6 @@ const Aanbod = () => {
               price: <div className="flex items-center justify-center h-[84px]">€ 299,00</div>,
               details: [
                 { icon: <User size={18} />, text: "4 ademsessies" },
-                { icon: <MapPin size={18} />, text: "Locatie: Bergen op Zoom" },
-                { icon: <Clock size={18} />, text: "Tijd: ca 90 min" },
-                { icon: <MessageCircle size={18} />, text: "+ intakegesprek" }
-              ],
-              buttonText: "Neem contact op",
-              popular: false
-            },
-            {
-              title: "Ademsessie Duo",
-              price: <div className="flex items-center justify-center h-[84px]">€ 139,00</div>,
-              details: [
-                { icon: <Users size={18} />, text: "1 sessie voor 2 personen" },
                 { icon: <MapPin size={18} />, text: "Locatie: Bergen op Zoom" },
                 { icon: <Clock size={18} />, text: "Tijd: ca 90 min" },
                 { icon: <MessageCircle size={18} />, text: "+ intakegesprek" }
@@ -384,7 +372,7 @@ const Aanbod = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ delay: i * 0.2, duration: 0.6 }}
-              className={`relative bg-bg-base/40 backdrop-blur-md p-10 rounded-[2rem] border ${item.popular ? 'border-leaf-green/50 shadow-lg' : 'border-white/30'} hover:border-soft-lavender hover:bg-white transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-powder-blue/20 flex flex-col h-full text-center`}
+              className={`relative bg-white/95 backdrop-blur-md p-10 rounded-[2rem] border ${item.popular ? 'border-leaf-green shadow-xl shadow-leaf-green/10' : 'border-white shadow-xl shadow-black/5'} hover:border-soft-lavender hover:bg-white transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-powder-blue/20 flex flex-col h-full text-center`}
             >
               {item.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-leaf-green text-white px-4 py-1 rounded-full text-sm font-medium tracking-wide">
@@ -433,13 +421,14 @@ const Benefits = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
   const [visibleReviewCount, setVisibleReviewCount] = useState(1);
+  const [isHovered, setIsHovered] = useState(false);
 
   const googleReviews = [
     { name: "Inge Thoen", text: "Martin heeft kennis van zaken, zijn voorbereiding op de sessie heeft hij met mij van te voren uitgebreid doorgenomen. Tijdens de sessie voelde ik me erg op mijn gemak, zijn stem is heel prettig om naar te luisteren, wat maakte dat ik het als heel fijn en ontspannen heb ervaren." },
     { name: "Remon Kleijn", text: "Martin is een fijn en rustig persoon. Hij begeleid je goed. En stelt je erg op je gemak. Ben normaal best gesloten. Maar tijdens de ademsessie kwamen er de nodige emoties los. Na de sessie wordt er veel aandacht gegeven. En voelde mij hierdoor erg ontspannen en opgelucht. Zitten er emoties vast. Zou ii de ademsessie erg aanraden." },
     { name: "Francien Klap", text: "In 1 woord WOW!!! Als ik iets heel erg belangrijk vind is het wel je veilig voelen bij een therapeut! Ik heb bij Martin een liefdevolle, zachte en veilige bedding ervaren. Van het begin tot het eind van de sessie een goede uitleg gehad en een hele fijne begeleiding. Er kwam het nodige los en ik kijk nu al uit naar een volgende sessie! Al veel healing werk gedaan, en op dit moment brengt mij dit weer een stap verder en dichter naar mijn ware zelf. Dankjewel Martin ❤️" },
     { name: "Sofie Stes", text: "De ademsessie was een mooie ervaring. Martin's begeleiding was rustig, ontspannen en professioneel. Aangename praktijkruimte. Zeker een aanrader." },
-    { name: "Brigitte Wensveen", text: "Als je een rustige ademcoach zoekt ben je bij Martin aan het goede adres. Martin is een echt mensenmens en neemt de tijd om een ontspannen omgeving te creëren waarin je je veilig kunt voelen. Hij begeleidt je vakkundig door de ademsessie en heeft oog voor wat er met je gebeurt en zegt op de juiste momenten de juiste dingen, zeker niet te veel maar ook niet te weinig. Na de ademsessie zat ik meer ontspannen in mijn lijf en was ik verbaasd hoeveel er los geademd was waarvan ik me niet eens bewust was dat het vastzat. Dank je wel Martin." },
+    { name: "Brigitte Wensveen", text: "Als je een rustige ademcoach zoekt ben je bij Martin aan het goede adres. Martin is een echt mensenmens en neemt de tijd om een ontspannen omgeving te creëren waarin je je veilig kunt voelen. Hij begeleidt je vakkundig door de ademsessie and heeft oog voor wat er met je gebeurt en zegt op de juiste momenten de juiste dingen, zeker niet te veel maar ook niet te weinig. Na de ademsessie zat ik meer ontspannen in mijn lijf en was ik verbaasd hoeveel er los geademd was waarvan ik me niet eens bewust was dat het vastzat. Dank je wel Martin." },
     { name: "Sabine", text: "Martin is een warm persoon die zich inleeft en een persoonlijke aanpak heeft. Hij legt goed uit wat je kunt verwachten en stemt muziek op wat voor jou het beste werkt tijdens de sessie. Er treedt van alles in werking en dat merk je in je lichaam. Maar nadien voel je letterlijk meer lucht en positiviteit." }
   ];
 
@@ -459,6 +448,15 @@ const Benefits = () => {
   }, []);
 
   const maxReviewIndex = Math.max(0, googleReviews.length - visibleReviewCount);
+
+  // Autoplay to rotate reviews automatically every 5 seconds
+  useEffect(() => {
+    if (isHovered || maxReviewIndex <= 0) return;
+    const interval = setInterval(() => {
+      setCurrentReviewIndex((prev) => (prev >= maxReviewIndex ? 0 : prev + 1));
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [isHovered, maxReviewIndex]);
 
   const nextReview = () => {
     setCurrentReviewIndex((prev) => (prev >= maxReviewIndex ? 0 : prev + 1));
@@ -565,7 +563,11 @@ const Benefits = () => {
             </div>
           </div>
 
-          <div className="relative max-w-6xl mx-auto px-4 md:px-12 mb-12">
+          <div 
+            className="relative max-w-6xl mx-auto px-4 md:px-12 mb-12"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
             <div className="overflow-hidden py-4">
               <motion.div
                 animate={{ x: `-${currentReviewIndex * (100 / visibleReviewCount)}%` }}
