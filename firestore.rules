@@ -27,7 +27,8 @@ service cloud.firestore {
     }
 
     match /artifacts/{appId}/public/{data}/submissions/{submissionId} {
-      allow read, delete: if true; // Open reading because dashboard uses UI password
+      // Disallow public read and delete for AVG / GDPR privacy protection
+      allow read, delete: if false;
       
       allow create: if isValidId(appId)
         && isValidId(data)

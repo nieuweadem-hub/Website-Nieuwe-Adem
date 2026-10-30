@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle, Calendar, Instagram, ChevronLeft, ChevronRight, Quote, Phone, Mail, AtSign, Sparkles, Inbox, Trash2 } from 'lucide-react';
+import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle, Calendar, Instagram, ChevronLeft, ChevronRight, Quote, Phone, Mail, AtSign, Sparkles } from 'lucide-react';
 import { db, auth, signInAnonymous, handleFirestoreError, OperationType } from './firebase';
-import { collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import emailjs from '@emailjs/browser';
 
 // --- Components ---
@@ -308,10 +308,11 @@ const Aanbod = () => {
   return (
     <section 
       id="methode" 
-      className="py-32 relative bg-cover bg-center bg-fixed"
-      style={{ backgroundImage: "url('https://i.ibb.co/wH3d65h/bos-water2.png')" }}
+      className="py-32 relative bg-bg-base overflow-hidden"
     >
-      <div className="absolute inset-0 bg-white/60 backdrop-blur-[4px]"></div>
+      {/* Decorative ambient background elements matching homepage */}
+      <div className="absolute top-[-10%] right-[-5%] w-[45vw] h-[45vw] rounded-full bg-powder-blue/20 blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-[-10%] left-[-5%] w-[45vw] h-[45vw] rounded-full bg-soft-lavender/30 blur-[120px] pointer-events-none"></div>
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
         
         <div className="text-center max-w-3xl mx-auto mb-16 relative">
@@ -502,9 +503,10 @@ const Benefits = () => {
   };
 
   return (
-    <section id="resultaten" className="py-32 bg-cover bg-fixed bg-center relative overflow-hidden" style={{ backgroundImage: "url('https://i.ibb.co/nN7J4mM2/pad1.jpg')" }}>
-      {/* Overlay to ensure text readability */}
-      <div className="absolute inset-0 bg-bg-base/60"></div>
+    <section id="resultaten" className="py-32 relative bg-bg-base overflow-hidden">
+      {/* Decorative ambient background elements matching homepage */}
+      <div className="absolute top-1/4 right-[-5%] w-[45vw] h-[45vw] rounded-full bg-soft-lavender/30 blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-1/4 left-[-5%] w-[45vw] h-[45vw] rounded-full bg-powder-blue/20 blur-[120px] pointer-events-none"></div>
       
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
         <div className="max-w-3xl mx-auto mb-24">
@@ -549,7 +551,7 @@ const Benefits = () => {
                   desc: "De techniek verlaagt de drempel naar het onderbewustzijn, waardoor u bewuster wordt van lichamelijke sensaties en opgeslagen emoties. Dit vergroot het zelfbewustzijn en leert u te luisteren naar de subtiele signalen van uw lichaam. Deze versterkte verbinding met uw eigen kern helpt om meer te vertrouwen op uw innerlijk weten en intuïtie."
                 }
               ].map((benefit, i) => (
-                <div key={i} className="flex gap-6 group p-6 rounded-[2rem] bg-white/75 backdrop-blur-sm border border-white/40 shadow-sm hover:border-soft-lavender/50 hover:bg-white hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <div key={i} className="flex gap-6 group p-6 rounded-[2rem] bg-white/90 backdrop-blur-sm border border-white/80 shadow-sm hover:border-soft-lavender/60 hover:bg-white hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                   <div className="flex-shrink-0 w-12 h-12 rounded-full bg-leaf-green flex items-center justify-center mt-1 group-hover:bg-leaf-green/90 transition-colors duration-300">
                     <Wind size={24} className="text-white" />
                   </div>
@@ -912,10 +914,11 @@ const Agenda = () => {
   return (
     <section 
       id="agenda" 
-      className="py-32 relative bg-cover bg-center bg-fixed"
-      style={{ backgroundImage: "url('https://i.ibb.co/nqK6kSR2/lucid-origin-professional-photo-of-image-profile-source-style-cinematic-golden-hour-lifestyle-0.jpg')" }}
+      className="py-32 relative bg-bg-base overflow-hidden"
     >
-      <div className="absolute inset-0 bg-white/60 backdrop-blur-sm"></div>
+      {/* Decorative ambient background elements matching homepage */}
+      <div className="absolute top-[-10%] right-[-5%] w-[45vw] h-[45vw] rounded-full bg-soft-lavender/30 blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-[-10%] left-[-5%] w-[45vw] h-[45vw] rounded-full bg-powder-blue/20 blur-[120px] pointer-events-none"></div>
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -1059,10 +1062,11 @@ const FAQ = () => {
   return (
     <section 
       id="faq" 
-      className="py-32 relative bg-cover bg-center bg-fixed"
-      style={{ backgroundImage: "url('https://i.ibb.co/q30C34k0/melanen1.jpg')" }}
+      className="py-32 relative bg-bg-base overflow-hidden"
     >
-      <div className="absolute inset-0 bg-white/50 backdrop-blur-[3px]"></div>
+      {/* Decorative ambient background elements matching homepage */}
+      <div className="absolute top-[-10%] left-[-5%] w-[45vw] h-[45vw] rounded-full bg-powder-blue/20 blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-[-10%] right-[-5%] w-[45vw] h-[45vw] rounded-full bg-soft-lavender/30 blur-[120px] pointer-events-none"></div>
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
         <div className="text-center mb-12">
           <div className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-white/60 border border-powder-blue/40 shadow-lg shadow-powder-blue/10 backdrop-blur-md mb-6">
@@ -1075,7 +1079,7 @@ const FAQ = () => {
           {faqs.map((faq, i) => (
             <div 
               key={i} 
-              className="bg-bg-base rounded-[1.5rem] overflow-hidden border border-transparent hover:border-soft-lavender/50 transition-all duration-300"
+              className="bg-white/90 backdrop-blur-sm rounded-[1.5rem] overflow-hidden border border-white/80 shadow-sm hover:border-powder-blue/40 hover:bg-white hover:shadow-md transition-all duration-300"
             >
               <button
                 className="w-full px-8 py-6 text-left flex justify-between items-center focus:outline-none"
@@ -1162,70 +1166,60 @@ const CTA = () => {
       console.warn('Firestore submission notice:', dbErr);
     }
 
-    // 2. Primary send: Server-side proxy /api/contact to avoid ad-blocker & CORS issues
-    let emailSent = false;
+    // 2. EmailJS browser send: verstuur beide templates gelijktijdig via Promise.all
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.name.trim(),
-          email: formData.email.trim(),
-          phone: formData.phone.trim(),
-          message: formData.message.trim()
-        })
+      const SERVICE_ID = 'service_fjxk3t7';
+      const TEMPLATE_OWNER_ID = 'template_sc93w6u';
+      const TEMPLATE_CUSTOMER_ID = 'template_6boj6lk';
+      const PUBLIC_KEY = '6DAm-rgSiGI9l5MU-';
+
+      // Template 1 parameters: Bericht naar Martin (eigenaar)
+      const ownerParams = {
+        name: formData.name.trim(),
+        from_name: formData.name.trim(),
+        user_name: formData.name.trim(),
+        email: formData.email.trim(),
+        from_email: formData.email.trim(),
+        reply_to: formData.email.trim(),
+        user_email: formData.email.trim(),
+        phone: formData.phone.trim() || '-',
+        telephone: formData.phone.trim() || '-',
+        message: formData.message.trim(),
+        to_email: 'martin.nieuweadem@gmail.com',
+        to_name: 'Martin',
+        subject: `Nieuw bericht via website van ${formData.name.trim()}`
+      };
+
+      // Template 2 parameters: Automatische bevestiging naar de klant
+      const customerParams = {
+        name: formData.name.trim(),
+        to_name: formData.name.trim(),
+        to_email: formData.email.trim(),
+        from_name: 'Martin | Nieuwe Adem',
+        from_email: 'martin.nieuweadem@gmail.com',
+        reply_to: 'martin.nieuweadem@gmail.com',
+        user_name: formData.name.trim(),
+        user_email: formData.email.trim(),
+        phone: formData.phone.trim() || '-',
+        telephone: formData.phone.trim() || '-',
+        message: formData.message.trim(),
+        subject: 'Bevestiging van je bericht - Nieuwe Adem'
+      };
+
+      const [ownerRes, customerRes] = await Promise.all([
+        emailjs.send(SERVICE_ID, TEMPLATE_OWNER_ID, ownerParams, PUBLIC_KEY),
+        emailjs.send(SERVICE_ID, TEMPLATE_CUSTOMER_ID, customerParams, PUBLIC_KEY)
+      ]);
+
+      console.info('EmailJS verzending geslaagd:', {
+        owner: ownerRes.status,
+        customer: customerRes.status
       });
-
-      const data = await response.json().catch(() => null);
-      if (response.ok && data?.success) {
-        emailSent = true;
-        isSuccess = true;
-      } else {
-        errorMessage = data?.error || `Server status ${response.status}`;
-      }
-    } catch (proxyErr: any) {
-      console.warn('Proxy /api/contact error, attempting direct client EmailJS fallback:', proxyErr);
-    }
-
-    // 3. Fallback: Direct EmailJS SDK in client if server proxy didn't send
-    if (!emailSent) {
-      try {
-        const serviceId = (import.meta as any).env?.VITE_EMAILJS_SERVICE_ID || 'service_fjxk3t7';
-        const templateId = (import.meta as any).env?.VITE_EMAILJS_TEMPLATE_ID || 'template_sc93w6u';
-        const publicKey = (import.meta as any).env?.VITE_EMAILJS_PUBLIC_KEY || '6DAm-rgSiGI9l5MU-';
-
-        const templateParams = {
-          name: formData.name.trim(),
-          from_name: formData.name.trim(),
-          user_name: formData.name.trim(),
-          email: formData.email.trim(),
-          reply_to: formData.email.trim(),
-          from_email: formData.email.trim(),
-          user_email: formData.email.trim(),
-          phone: formData.phone.trim() || '-',
-          telephone: formData.phone.trim() || '-',
-          message: formData.message.trim(),
-          to_email: 'martin.nieuweadem@gmail.com',
-          to_name: 'Martin',
-          subject: `Nieuw bericht via website van ${formData.name.trim()}`
-        };
-
-        const result = await emailjs.send(
-          serviceId,
-          templateId,
-          templateParams,
-          publicKey
-        );
-        console.info('EmailJS direct send status:', result.status, result.text);
-        if (result.status === 200) {
-          emailSent = true;
-          isSuccess = true;
-        }
-      } catch (emailErr: any) {
-        console.error('EmailJS direct error details:', emailErr?.text || emailErr?.message || emailErr);
-        if (!errorMessage) {
-          errorMessage = emailErr?.text || emailErr?.message || 'Onbekende EmailJS fout';
-        }
+      isSuccess = true;
+    } catch (emailErr: any) {
+      console.error('EmailJS direct error details:', emailErr?.text || emailErr?.message || emailErr);
+      if (!errorMessage) {
+        errorMessage = emailErr?.text || emailErr?.message || 'Fout bij verzenden via EmailJS';
       }
     }
 
@@ -1246,9 +1240,12 @@ const CTA = () => {
   return (
     <section 
       id="contact" 
-      className="py-32 relative bg-cover bg-center bg-fixed"
-      style={{ backgroundImage: "url('https://i.ibb.co/27xfkZ5M/2.jpg')" }}
+      className="py-32 relative bg-bg-base overflow-hidden"
     >
+      {/* Decorative ambient background elements matching homepage */}
+      <div className="absolute top-1/4 right-[-5%] w-[45vw] h-[45vw] rounded-full bg-soft-lavender/30 blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-1/4 left-[-5%] w-[45vw] h-[45vw] rounded-full bg-powder-blue/20 blur-[120px] pointer-events-none"></div>
+
       {/* Toast Notification - positioned away from bottom-right floating socials */}
       <AnimatePresence>
         {toast.show && (
@@ -1273,7 +1270,6 @@ const CTA = () => {
         )}
       </AnimatePresence>
 
-      <div className="absolute inset-0 bg-white/50 backdrop-blur-[3px]"></div>
       <div className="max-w-5xl mx-auto px-6 md:px-12 relative z-10">
         <div className="text-center relative z-10">
           <div className="inline-flex items-center justify-center px-8 py-4 flex-wrap rounded-full bg-white/60 border border-powder-blue/40 shadow-lg shadow-powder-blue/10 backdrop-blur-md mb-16 mx-auto w-full max-w-4xl">
@@ -1286,7 +1282,7 @@ const CTA = () => {
             <form 
               ref={formRef}
               onSubmit={handleSubmit}
-              className="bg-white/60 backdrop-blur-md p-8 md:p-10 rounded-[2rem] border border-white/60 shadow-xl text-left"
+              className="bg-white/90 backdrop-blur-md p-8 md:p-10 rounded-[2rem] border border-white shadow-xl text-left"
             >
                 <div className="mb-6">
                   <label htmlFor="name" className="block text-text-dark/80 font-medium mb-2 ml-1">Naam *</label>
@@ -1296,7 +1292,7 @@ const CTA = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="w-full px-5 py-4 rounded-2xl border border-soft-lavender/50 bg-white/70 focus:outline-none focus:ring-2 focus:ring-powder-blue/40 focus:border-powder-blue transition-all placeholder:text-text-dark/30"
+                    className="w-full px-5 py-4 rounded-2xl border border-soft-lavender/60 bg-white/90 focus:outline-none focus:ring-2 focus:ring-powder-blue/40 focus:border-powder-blue transition-all placeholder:text-text-dark/40"
                     placeholder="Jouw naam"
                     required
                     disabled={isSubmitting}
@@ -1310,7 +1306,7 @@ const CTA = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-5 py-4 rounded-2xl border border-soft-lavender/50 bg-white/70 focus:outline-none focus:ring-2 focus:ring-powder-blue/40 focus:border-powder-blue transition-all placeholder:text-text-dark/30"
+                    className="w-full px-5 py-4 rounded-2xl border border-soft-lavender/60 bg-white/90 focus:outline-none focus:ring-2 focus:ring-powder-blue/40 focus:border-powder-blue transition-all placeholder:text-text-dark/40"
                     placeholder="jouw@email.nl"
                     required
                     disabled={isSubmitting}
@@ -1324,7 +1320,7 @@ const CTA = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className="w-full px-5 py-4 rounded-2xl border border-soft-lavender/50 bg-white/70 focus:outline-none focus:ring-2 focus:ring-powder-blue/40 focus:border-powder-blue transition-all placeholder:text-text-dark/30"
+                    className="w-full px-5 py-4 rounded-2xl border border-soft-lavender/60 bg-white/90 focus:outline-none focus:ring-2 focus:ring-powder-blue/40 focus:border-powder-blue transition-all placeholder:text-text-dark/40"
                     placeholder="06 12345678"
                     disabled={isSubmitting}
                   />
@@ -1343,7 +1339,7 @@ const CTA = () => {
                     value={formData.message}
                     onChange={handleInputChange}
                     rows={4}
-                    className="w-full px-5 py-4 rounded-2xl border border-soft-lavender/50 bg-white/70 focus:outline-none focus:ring-2 focus:ring-powder-blue/40 focus:border-powder-blue transition-all resize-none placeholder:text-text-dark/30"
+                    className="w-full px-5 py-4 rounded-2xl border border-soft-lavender/60 bg-white/90 focus:outline-none focus:ring-2 focus:ring-powder-blue/40 focus:border-powder-blue transition-all resize-none placeholder:text-text-dark/40"
                     placeholder="Voor meer informatie of het plannen van een ademsessie..."
                     required
                     disabled={isSubmitting}
@@ -1373,10 +1369,9 @@ const CTA = () => {
 
 interface FooterProps {
   onOpenLegal: (type: 'privacy' | 'voorwaarden') => void;
-  onOpenMessages: () => void;
 }
 
-const Footer = ({ onOpenLegal, onOpenMessages }: FooterProps) => {
+const Footer = ({ onOpenLegal }: FooterProps) => {
   return (
     <footer className="bg-charcoal text-white py-20 border-t border-charcoal/30">
       <div className="max-w-7xl mx-auto px-6 md:px-12 grid md:grid-cols-4 gap-12">
@@ -1455,14 +1450,6 @@ const Footer = ({ onOpenLegal, onOpenMessages }: FooterProps) => {
             className="hover:text-powder-blue transition-colors cursor-pointer text-left"
           >
             Voorwaarden
-          </button>
-          <button 
-            onClick={onOpenMessages} 
-            className="hover:text-powder-blue transition-colors cursor-pointer text-left opacity-70 hover:opacity-100 flex items-center gap-1.5"
-            title="Ingekomen contactberichten bekijken"
-          >
-            <Inbox size={15} />
-            <span>Berichten</span>
           </button>
         </div>
       </div>
@@ -1619,12 +1606,10 @@ const RealityJourney = () => {
   ];
 
   return (
-    <section className="py-20 bg-cover bg-fixed bg-center relative overflow-hidden" id="reality-journey" style={{ backgroundImage: "url('https://i.ibb.co/23CPqTkK/bos-water2.png')" }}>
-      {/* Overlay to ensure text readability, keeping the soft feel */}
-      <div className="absolute inset-0 bg-bg-base/60"></div>
-
-      {/* Decorative background circle */}
-      <div className="absolute top-1/2 left-[-10%] w-[40vw] h-[40vw] -translate-y-1/2 rounded-full bg-soft-lavender/30 blur-[100px] pointer-events-none"></div>
+    <section className="py-20 relative bg-bg-base overflow-hidden" id="reality-journey">
+      {/* Decorative ambient background elements matching homepage */}
+      <div className="absolute top-1/2 left-[-10%] w-[45vw] h-[45vw] -translate-y-1/2 rounded-full bg-soft-lavender/30 blur-[100px] pointer-events-none"></div>
+      <div className="absolute bottom-[-10%] right-[-5%] w-[40vw] h-[40vw] rounded-full bg-powder-blue/20 blur-[120px] pointer-events-none"></div>
       
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10 w-full">
         
@@ -1649,7 +1634,7 @@ const RealityJourney = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.7, delay: idx * 0.15, ease: "easeOut" }}
-                className="bg-white/70 backdrop-blur-md rounded-3xl overflow-hidden border border-leaf-green/20 shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-leaf-green/10"
+                className="bg-white/90 backdrop-blur-md rounded-3xl overflow-hidden border border-leaf-green/20 shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-leaf-green/10 hover:border-leaf-green/40"
               >
                 <button
                   className="w-full p-8 text-left flex justify-between items-center focus:outline-none"
@@ -1722,150 +1707,107 @@ const FloatingSocials = () => {
   );
 };
 
-interface Submission {
-  id: string;
-  name?: string;
-  email?: string;
-  phone?: string;
-  message?: string;
-  createdAt?: any;
-}
 
-const MessagesModal = ({
-  isOpen,
-  onClose
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) => {
-  const [messages, setMessages] = useState<Submission[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+const ApologyBanner = () => {
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    if (!isOpen) return;
-    setIsLoading(true);
-    const appId = '57c6bd42-54bc-4e53-b191-aba26ca0d214';
-    const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'submissions');
-    const q = query(colRef, orderBy('createdAt', 'desc'));
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const items = snapshot.docs.map(d => ({
-          id: d.id,
-          ...d.data()
-        })) as Submission[];
-        setMessages(items);
-        setIsLoading(false);
-      },
-      (error) => {
-        console.warn('Submissions snapshot notice:', error);
-        setIsLoading(false);
-      }
-    );
-
-    return () => unsubscribe();
-  }, [isOpen]);
-
-  const handleDelete = async (id: string) => {
-    try {
-      const appId = '57c6bd42-54bc-4e53-b191-aba26ca0d214';
-      await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'submissions', id));
-    } catch (err) {
-      console.error('Fout bij verwijderen bericht:', err);
+    const isDismissed = sessionStorage.getItem('nieuweadem_apology_dismissed');
+    if (!isDismissed) {
+      const timer = setTimeout(() => setIsVisible(true), 400);
+      return () => clearTimeout(timer);
     }
+  }, []);
+
+  const handleDismiss = () => {
+    setIsVisible(false);
+    sessionStorage.setItem('nieuweadem_apology_dismissed', 'true');
   };
 
-  if (!isOpen) return null;
+  const handleContactClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
-    <div 
-      className="fixed inset-0 z-[120] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <div 
-        className="relative bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-bg-base/50">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-leaf-green/10 text-leaf-green">
-              <Inbox size={22} />
+    <AnimatePresence>
+      {isVisible && (
+        <motion.aside
+          initial={{ opacity: 0, y: 50, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 40, scale: 0.95 }}
+          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          className="fixed bottom-24 sm:bottom-6 left-4 right-4 sm:left-6 sm:right-auto sm:max-w-lg md:max-w-xl z-[95]"
+          role="complementary"
+          aria-label="Mededeling tijdelijke onbereikbaarheid"
+        >
+          <div className="relative bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-3xl border border-leaf-green/30 shadow-[0_16px_40px_rgba(0,0,0,0.12)] p-5 sm:p-6 text-text-dark">
+            {/* Sluitknop */}
+            <button
+              onClick={handleDismiss}
+              className="absolute top-4 right-4 p-2 rounded-full text-text-dark/40 hover:text-text-dark hover:bg-black/5 transition-colors cursor-pointer"
+              aria-label="Sluit mededeling"
+              title="Sluiten"
+            >
+              <X size={18} />
+            </button>
+
+            <div className="flex items-start gap-3.5 pr-8">
+              <div className="p-2.5 rounded-xl bg-leaf-green/10 text-leaf-green shrink-0 mt-0.5">
+                <Sparkles size={20} />
+              </div>
+              <div>
+                <span className="inline-block text-[11px] font-semibold uppercase tracking-wider text-leaf-green bg-leaf-green/10 px-2.5 py-0.5 rounded-full mb-1.5">
+                  Belangrijk bericht
+                </span>
+                <h3 className="text-base sm:text-lg font-bold text-text-dark leading-snug">
+                  Excuses voor de tijdelijke onbereikbaarheid
+                </h3>
+              </div>
             </div>
-            <div>
-              <h3 className="text-xl font-semibold text-text-dark">Ingekomen Berichten</h3>
-              <p className="text-xs text-text-dark/50">Veilig opgeslagen via het contactformulier ({messages.length})</p>
+
+            <div className="mt-3.5 space-y-3 text-xs sm:text-sm text-text-dark/80 leading-relaxed">
+              <p>
+                Onlangs was mijn website door een technische storing helaas een tijdje buiten gebruik. Hierdoor zijn berichten en aanmeldingen via het contactformulier in die periode niet bij mij binnengekomen. Mocht je mij geprobeerd hebben te bereiken en geen reactie hebben ontvangen, mijn oprechte excuses voor het ongemak.
+              </p>
+
+              <div className="p-3.5 rounded-xl bg-leaf-green/5 border border-leaf-green/20">
+                <p className="font-medium text-text-dark">
+                  Om dit goed te maken, bied ik in de gehele maand november € 10,- korting op een ademsessie.
+                </p>
+                <p className="mt-1 text-text-dark/80">
+                  Voel je welkom om opnieuw contact met mij op te nemen.
+                </p>
+                <p className="mt-1.5 font-medium text-text-dark text-xs">
+                  Mvg, Martin
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4 pt-3.5 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3">
+              <a
+                href="#contact-form"
+                onClick={handleContactClick}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-leaf-green text-white text-xs sm:text-sm font-medium rounded-full hover:bg-leaf-green/90 transition-colors shadow-sm"
+              >
+                Opnieuw contact opnemen
+              </a>
+              <button
+                onClick={handleDismiss}
+                className="text-xs text-text-dark/60 hover:text-text-dark font-medium px-3 py-2 rounded-full hover:bg-black/5 transition-colors cursor-pointer"
+              >
+                Sluiten
+              </button>
             </div>
           </div>
-          <button 
-            onClick={onClose}
-            className="p-2 rounded-full hover:bg-gray-200/60 text-text-dark/60 hover:text-text-dark transition-colors cursor-pointer"
-            aria-label="Sluiten"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        <div className="p-6 overflow-y-auto space-y-4 max-h-[calc(85vh-90px)]">
-          {isLoading ? (
-            <div className="py-12 text-center text-text-dark/50">
-              <Wind className="animate-spin inline-block mb-3" size={24} />
-              <p>Berichten laden...</p>
-            </div>
-          ) : messages.length === 0 ? (
-            <div className="py-12 text-center text-text-dark/50">
-              <p className="text-base font-medium">Nog geen berichten ontvangen.</p>
-              <p className="text-xs mt-1">Zodra iemand het contactformulier invult, verschijnt het hier direct.</p>
-            </div>
-          ) : (
-            messages.map((msg) => {
-              const dateStr = msg.createdAt?.toDate 
-                ? msg.createdAt.toDate().toLocaleString('nl-NL', { dateStyle: 'medium', timeStyle: 'short' })
-                : 'Zojuist';
-              return (
-                <div key={msg.id} className="p-5 rounded-2xl border border-soft-lavender/40 bg-white shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-start justify-between gap-4 mb-3">
-                    <div>
-                      <h4 className="font-semibold text-text-dark text-base">{msg.name || 'Onbekende afzender'}</h4>
-                      <p className="text-xs text-text-dark/50">{dateStr}</p>
-                    </div>
-                    <button
-                      onClick={() => handleDelete(msg.id)}
-                      className="p-1.5 rounded-lg text-text-dark/30 hover:text-red-500 hover:bg-red-50 transition-colors"
-                      title="Bericht verwijderen"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {msg.email && (
-                      <a 
-                        href={`mailto:${msg.email}`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-powder-blue/10 text-powder-blue hover:bg-powder-blue/20 transition-colors"
-                      >
-                        <Mail size={12} />
-                        {msg.email}
-                      </a>
-                    )}
-                  </div>
-
-                  <div className="bg-bg-base/60 p-3.5 rounded-xl text-sm text-text-dark/80 whitespace-pre-line leading-relaxed">
-                    {msg.message}
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
-      </div>
-    </div>
+        </motion.aside>
+      )}
+    </AnimatePresence>
   );
 };
 
 export default function App() {
   const [legalModal, setLegalModal] = useState<'privacy' | 'voorwaarden' | null>(null);
-  const [messagesModalOpen, setMessagesModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen font-sans bg-bg-base selection:bg-soft-lavender selection:text-text-dark">
@@ -1880,10 +1822,10 @@ export default function App() {
         <FAQ />
         <CTA />
       </main>
-      <Footer onOpenLegal={(type) => setLegalModal(type)} onOpenMessages={() => setMessagesModalOpen(true)} />
+      <Footer onOpenLegal={(type) => setLegalModal(type)} />
       <FloatingSocials />
+      <ApologyBanner />
       <LegalModal activeModal={legalModal} onClose={() => setLegalModal(null)} />
-      <MessagesModal isOpen={messagesModalOpen} onClose={() => setMessagesModalOpen(false)} />
     </div>
   );
 }
