@@ -1164,20 +1164,21 @@ const CTA = () => {
     // 2. EmailJS send
     try {
       const serviceId = (import.meta as any).env?.VITE_EMAILJS_SERVICE_ID || 'service_fjxk3t7';
-      const templateId = (import.meta as any).env?.VITE_EMAILJS_TEMPLATE_ID || 'template_6boj6lk';
+      const templateId = (import.meta as any).env?.VITE_EMAILJS_TEMPLATE_ID || 'template_sc93w6u';
       const publicKey = (import.meta as any).env?.VITE_EMAILJS_PUBLIC_KEY || '6DAm-rgSiGI9l5MU-';
 
       if (formRef.current && serviceId && templateId && publicKey) {
-        await emailjs.sendForm(
+        const result = await emailjs.sendForm(
           serviceId,
           templateId,
           formRef.current,
           publicKey
         );
+        console.info('EmailJS send status:', result.status, result.text);
         isSuccess = true;
       }
-    } catch (emailErr) {
-      console.warn('EmailJS submission notice:', emailErr);
+    } catch (emailErr: any) {
+      console.error('EmailJS error details:', emailErr?.text || emailErr?.message || emailErr);
     }
 
     if (isSuccess) {
@@ -1275,6 +1276,11 @@ const CTA = () => {
                     disabled={isSubmitting}
                   />
                 </div>
+                <input type="hidden" name="from_name" value={formData.name} />
+                <input type="hidden" name="user_name" value={formData.name} />
+                <input type="hidden" name="reply_to" value={formData.email} />
+                <input type="hidden" name="from_email" value={formData.email} />
+                <input type="hidden" name="user_email" value={formData.email} />
                 <input type="hidden" name="subject" value={formData.subject} />
                 <div className="mb-8">
                   <label htmlFor="message" className="block text-text-dark/80 font-medium mb-2 ml-1">Je bericht *</label>
