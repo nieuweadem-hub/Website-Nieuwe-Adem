@@ -348,8 +348,8 @@ const Aanbod = () => {
               details: [
                 { icon: <User size={18} />, text: "4 ademsessies" },
                 { icon: <MapPin size={18} />, text: "Locatie: Bergen op Zoom" },
-                { icon: <Clock size={18} />, text: "Tijd: ca 90 min" },
-                { icon: <MessageCircle size={18} />, text: "+ intakegesprek" }
+                { icon: <Clock size={18} />, text: "Tijd: ca 90 min per sessie" },
+                { icon: <MessageCircle size={18} />, text: "+ intakegesprek & opvolging" }
               ],
               buttonText: "Neem contact op",
               popular: false
@@ -359,10 +359,12 @@ const Aanbod = () => {
               price: <div className="flex items-center justify-center h-[84px]">Zie agenda</div>,
               priceSubtext: undefined,
               details: [
-                { icon: <Users size={18} />, text: "Sessie: groep" },
-                { icon: <Info size={18} />, text: "Ademcirkels worden zowel in kleine- en grote groepen georganiseerd." }
+                { icon: <Users size={18} />, text: "Groepssessie (kleine of grote groep)" },
+                { icon: <MapPin size={18} />, text: "Locatie: Bergen op Zoom" },
+                { icon: <Clock size={18} />, text: "Tijd: ca 120 min" },
+                { icon: <Info size={18} />, text: "Verbonden ademen in veilige bedding" }
               ],
-              buttonText: "Agenda",
+              buttonText: "Bekijk agenda",
               popular: false
             }
           ].map((item, i) => (
@@ -396,10 +398,10 @@ const Aanbod = () => {
               </ul>
               
               <a 
-                href={item.buttonText === "Agenda" ? "#agenda" : "#contact-form"}
+                href={item.buttonText.includes("agenda") || item.buttonText.includes("Agenda") ? "#agenda" : "#contact-form"}
                 onClick={(e) => {
                   e.preventDefault();
-                  if (item.buttonText === "Agenda") {
+                  if (item.buttonText.includes("agenda") || item.buttonText.includes("Agenda")) {
                     document.getElementById('agenda')?.scrollIntoView({ behavior: 'smooth' });
                   } else {
                     document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
@@ -457,6 +459,24 @@ const Benefits = () => {
     }, 5000);
     return () => clearInterval(interval);
   }, [isHovered, maxReviewIndex]);
+
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    if (diff > 45) {
+      nextReview();
+    } else if (diff < -45) {
+      prevReview();
+    }
+    setTouchStartX(null);
+  };
 
   const nextReview = () => {
     setCurrentReviewIndex((prev) => (prev >= maxReviewIndex ? 0 : prev + 1));
@@ -564,9 +584,11 @@ const Benefits = () => {
           </div>
 
           <div 
-            className="relative max-w-6xl mx-auto px-4 md:px-12 mb-12"
+            className="relative max-w-6xl mx-auto px-4 md:px-12 mb-12 select-none"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
           >
             <div className="overflow-hidden py-4">
               <motion.div
@@ -1096,18 +1118,18 @@ const CTA = () => {
     type: 'success'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({ name: '', email: '', subject: 'Nieuw bericht', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', subject: 'Nieuw bericht via website', message: '' });
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    signInAnonymous();
+    signInAnonymous().catch(err => console.warn('Anonymous auth init notice:', err));
   }, []);
 
   const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ show: true, message, type });
     setTimeout(() => {
       setToast(prev => ({ ...prev, show: false }));
-    }, 10000);
+    }, 8000);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -1117,35 +1139,54 @@ const CTA = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) return;
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) return;
     
     setIsSubmitting(true);
+    let isSuccess = false;
+
+    // 1. Dual save: Firestore backup so messages are safely stored
+    try {
+      const appId = '57c6bd42-54bc-4e53-b191-aba26ca0d214';
+      const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'submissions');
+      await addDoc(colRef, {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        message: formData.phone.trim() 
+          ? `Telefoon: ${formData.phone.trim()}\n\nBericht:\n${formData.message.trim()}`
+          : formData.message.trim(),
+        createdAt: serverTimestamp()
+      });
+      isSuccess = true;
+    } catch (dbErr) {
+      console.warn('Firestore submission notice:', dbErr);
+    }
+
+    // 2. EmailJS send
     try {
       const serviceId = (import.meta as any).env?.VITE_EMAILJS_SERVICE_ID || 'service_fjxk3t7';
       const templateId = (import.meta as any).env?.VITE_EMAILJS_TEMPLATE_ID || 'template_6boj6lk';
       const publicKey = (import.meta as any).env?.VITE_EMAILJS_PUBLIC_KEY || '6DAm-rgSiGI9l5MU-';
 
-      if (!serviceId || !templateId || !publicKey) {
-        throw new Error('EmailJS configuratie mist.');
+      if (formRef.current && serviceId && templateId && publicKey) {
+        await emailjs.sendForm(
+          serviceId,
+          templateId,
+          formRef.current,
+          publicKey
+        );
+        isSuccess = true;
       }
-      
-      if (!formRef.current) return;
-
-      await emailjs.sendForm(
-        serviceId,
-        templateId,
-        formRef.current,
-        publicKey
-      );
-      
-      showToast('Bedankt voor je bericht! Ik neem zo spoedig mogelijk contact met u op.', 'success');
-      setFormData({ name: '', email: '', subject: 'Nieuw bericht', message: '' });
-    } catch (error: any) {
-      console.error('Submission error:', error);
-      showToast('Er is iets misgegaan. Probeer het later opnieuw.', 'error');
-    } finally {
-      setIsSubmitting(false);
+    } catch (emailErr) {
+      console.warn('EmailJS submission notice:', emailErr);
     }
+
+    if (isSuccess) {
+      showToast('Bedankt voor je bericht! Ik neem zo spoedig mogelijk contact met je op.', 'success');
+      setFormData({ name: '', email: '', phone: '', subject: 'Nieuw bericht via website', message: '' });
+    } else {
+      showToast('Er ging iets mis bij het verzenden. Neem gerust direct contact op via WhatsApp of telefonisch.', 'error');
+    }
+    setIsSubmitting(false);
   };
 
   return (
@@ -1154,22 +1195,23 @@ const CTA = () => {
       className="py-32 relative bg-cover bg-center bg-fixed"
       style={{ backgroundImage: "url('https://i.ibb.co/27xfkZ5M/2.jpg')" }}
     >
-      {/* Toast Notification */}
+      {/* Toast Notification - positioned away from bottom-right floating socials */}
       <AnimatePresence>
         {toast.show && (
           <motion.div
             initial={{ opacity: 0, y: 50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className={`fixed bottom-8 right-8 z-50 px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 ${
+            className={`fixed bottom-6 left-1/2 -translate-x-1/2 md:left-8 md:translate-x-0 md:bottom-8 z-[110] px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 max-w-md w-[90%] md:w-auto ${
               toast.type === 'success' ? 'bg-white text-leaf-green border border-leaf-green/20' : 'bg-white text-red-500 border border-red-500/20'
             }`}
           >
-            {toast.type === 'success' ? <CheckCircle2 size={24} /> : <XCircle size={24} />}
-            <span className="font-medium text-text-dark">{toast.message}</span>
+            {toast.type === 'success' ? <CheckCircle2 size={24} className="flex-shrink-0" /> : <XCircle size={24} className="flex-shrink-0" />}
+            <span className="font-medium text-text-dark text-sm md:text-base leading-snug">{toast.message}</span>
             <button 
               onClick={() => setToast(prev => ({ ...prev, show: false }))}
-              className="ml-4 text-text-dark/40 hover:text-text-dark transition-colors"
+              className="ml-auto text-text-dark/40 hover:text-text-dark transition-colors p-1"
+              aria-label="Sluit melding"
             >
               <X size={18} />
             </button>
@@ -1193,7 +1235,7 @@ const CTA = () => {
               className="bg-white/60 backdrop-blur-md p-8 md:p-10 rounded-[2rem] border border-white/60 shadow-xl text-left"
             >
                 <div className="mb-6">
-                  <label htmlFor="name" className="block text-text-dark/80 font-medium mb-2 ml-1">Naam</label>
+                  <label htmlFor="name" className="block text-text-dark/80 font-medium mb-2 ml-1">Naam *</label>
                   <input 
                     type="text" 
                     id="name" 
@@ -1207,7 +1249,7 @@ const CTA = () => {
                   />
                 </div>
                 <div className="mb-6">
-                  <label htmlFor="email" className="block text-text-dark/80 font-medium mb-2 ml-1">E-mailadres</label>
+                  <label htmlFor="email" className="block text-text-dark/80 font-medium mb-2 ml-1">E-mailadres *</label>
                   <input 
                     type="email" 
                     id="email" 
@@ -1220,9 +1262,22 @@ const CTA = () => {
                     disabled={isSubmitting}
                   />
                 </div>
+                <div className="mb-6">
+                  <label htmlFor="phone" className="block text-text-dark/80 font-medium mb-2 ml-1">Telefoonnummer (optioneel)</label>
+                  <input 
+                    type="tel" 
+                    id="phone" 
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className="w-full px-5 py-4 rounded-2xl border border-soft-lavender/50 bg-white/70 focus:outline-none focus:ring-2 focus:ring-powder-blue/40 focus:border-powder-blue transition-all placeholder:text-text-dark/30"
+                    placeholder="06 12345678"
+                    disabled={isSubmitting}
+                  />
+                </div>
                 <input type="hidden" name="subject" value={formData.subject} />
                 <div className="mb-8">
-                  <label htmlFor="message" className="block text-text-dark/80 font-medium mb-2 ml-1">Je bericht</label>
+                  <label htmlFor="message" className="block text-text-dark/80 font-medium mb-2 ml-1">Je bericht *</label>
                   <textarea 
                     id="message" 
                     name="message"
@@ -1238,7 +1293,7 @@ const CTA = () => {
                 <button 
                   type="submit" 
                   disabled={isSubmitting}
-                  className="w-full py-4 bg-leaf-green text-white rounded-2xl font-medium hover:bg-leaf-green/90 transition-colors shadow-sm text-lg flex justify-center items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full py-4 bg-leaf-green text-white rounded-2xl font-medium hover:bg-leaf-green/90 transition-colors shadow-sm text-lg flex justify-center items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {isSubmitting ? (
                     <>
@@ -1257,7 +1312,11 @@ const CTA = () => {
     );
   };
 
-const Footer = () => {
+interface FooterProps {
+  onOpenLegal: (type: 'privacy' | 'voorwaarden') => void;
+}
+
+const Footer = ({ onOpenLegal }: FooterProps) => {
   return (
     <footer className="bg-charcoal text-white py-20 border-t border-charcoal/30">
       <div className="max-w-7xl mx-auto px-6 md:px-12 grid md:grid-cols-4 gap-12">
@@ -1325,11 +1384,138 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-6 md:px-12 mt-20 pt-8 border-t border-white/20 text-white/50 text-sm flex flex-col md:flex-row justify-between items-center">
         <p>&copy; {new Date().getFullYear()} Nieuwe Adem. Alle rechten voorbehouden.</p>
         <div className="flex space-x-8 mt-6 md:mt-0 items-center">
-          <a href="#" className="hover:text-powder-blue transition-colors">Privacy</a>
-          <a href="#" className="hover:text-powder-blue transition-colors">Voorwaarden</a>
+          <button 
+            onClick={() => onOpenLegal('privacy')} 
+            className="hover:text-powder-blue transition-colors cursor-pointer text-left"
+          >
+            Privacy
+          </button>
+          <button 
+            onClick={() => onOpenLegal('voorwaarden')} 
+            className="hover:text-powder-blue transition-colors cursor-pointer text-left"
+          >
+            Voorwaarden
+          </button>
         </div>
       </div>
     </footer>
+  );
+};
+
+const LegalModal = ({ 
+  activeModal, 
+  onClose 
+}: { 
+  activeModal: 'privacy' | 'voorwaarden' | null; 
+  onClose: () => void; 
+}) => {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (activeModal) {
+      window.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [activeModal, onClose]);
+
+  if (!activeModal) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 z-[120] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div 
+        className="relative bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-bg-base/50">
+          <h3 className="text-xl font-semibold text-text-dark">
+            {activeModal === 'privacy' ? 'Privacyverklaring' : 'Algemene Voorwaarden & Contra-indicaties'}
+          </h3>
+          <button 
+            onClick={onClose}
+            className="p-2 rounded-full hover:bg-gray-200/60 text-text-dark/60 hover:text-text-dark transition-colors cursor-pointer"
+            aria-label="Sluiten"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="px-6 py-6 overflow-y-auto space-y-4 text-text-dark/80 text-sm md:text-base leading-relaxed font-light">
+          {activeModal === 'privacy' ? (
+            <>
+              <p className="font-normal text-text-dark">
+                Nieuwe Adem (Martin), gevestigd in Bergen op Zoom, hecht grote waarde aan een zorgvuldige en veilige omgang met jouw persoonsgegevens conform de Algemene Verordening Gegevensbescherming (AVG).
+              </p>
+              <div>
+                <h4 className="font-semibold text-text-dark text-base mb-1">1. Welke gegevens worden verwerkt?</h4>
+                <p>Wanneer je contact opneemt via het contactformulier, e-mail of telefonisch, verwerken wij uitsluitend de door jouzelf verstrekte gegevens: je naam, e-mailadres, eventueel telefoonnummer en het bericht dat je verzendt.</p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-text-dark text-base mb-1">2. Doel van de gegevensverwerking</h4>
+                <p>Jouw gegevens worden uitsluitend gebruikt om contact met je op te nemen, je vragen te beantwoorden en eventueel een ademsessie of deelname aan een ademcirkel in te plannen. Jouw gegevens worden nooit met derden gedeeld of voor marketingdoeleinden verkocht.</p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-text-dark text-base mb-1">3. Bewaartermijn</h4>
+                <p>Wij bewaren jouw contactgegevens niet langer dan strikt noodzakelijk is voor de communicatie en het coachingstraject.</p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-text-dark text-base mb-1">4. Beveiliging</h4>
+                <p>De website maakt gebruik van een beveiligde SSL-verbinding (HTTPS) en betrouwbare cloudsystemen. Wij plaatsen geen tracking cookies.</p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-text-dark text-base mb-1">5. Jouw rechten</h4>
+                <p>Je hebt te allen tijde het recht om je persoonsgegevens in te zien, te corrigeren of te laten verwijderen. Neem hiervoor eenvoudig contact op via <a href="mailto:martin.nieuweadem@gmail.com" className="text-ocean-blue underline">martin.nieuweadem@gmail.com</a>.</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="font-normal text-text-dark">
+                Welkom bij Nieuwe Adem. Lees onderstaande voorwaarden en contra-indicaties zorgvuldig door voorafgaand aan een ademsessie.
+              </p>
+              <div>
+                <h4 className="font-semibold text-text-dark text-base mb-1">1. Aard van het ademwerk</h4>
+                <p>Ademcoaching is gericht op ontspanning, stressreductie, zenuwstelselregulatie en persoonlijke transformatie. Ademcoaching is géén medische of psychiatrische behandeling en vervangt geen reguliere medische zorg. Raadpleeg bij fysieke of psychische klachten altijd eerst een arts of behandelend specialist.</p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-text-dark text-base mb-1">2. Contra-indicaties</h4>
+                <p>Intensieve verbonden ademhaling activeert krachtige fysiologische processen in het lichaam. Het is zonder voorafgaand medisch advies niet geschikt bij o.a.: hart- en vaatziekten, ernstige hypertensie, epilepsie, zwangerschap, netvliesloslating of acute psychische aandoeningen zoals actuele psychoses of zware PTSS. Twijfel je of heb je een medische voorgeschiedenis? Geef dit altijd voorafgaand aan de sessie aan; we stemmen de ademtechniek dan veilig en zacht op jou af.</p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-text-dark text-base mb-1">3. Eigen verantwoordelijkheid</h4>
+                <p>Deelname aan een individuele sessie of ademcirkel geschiedt te allen tijde op eigen verantwoordelijkheid. Je behoudt altijd de volledige regie om tijdens de sessie aan te geven wat voor jou comfortabel voelt.</p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-text-dark text-base mb-1">4. Annulering en verzetten</h4>
+                <p>Mocht je verhinderd zijn voor een afspraak, verzoek ik je dit minimaal 24 uur van tevoren door te geven via telefoon of WhatsApp (06 28348341). Zo kan de gereserveerde tijd eventueel nog voor iemand anders worden ingezet.</p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-text-dark text-base mb-1">5. Betaling</h4>
+                <p>Betaling vindt plaats per overboeking of betaalverzoek conform de op de website vermelde tarieven.</p>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-4 border-t border-gray-100 bg-bg-base/30 flex justify-end">
+          <button 
+            onClick={onClose}
+            className="px-6 py-2.5 bg-leaf-green text-white rounded-full font-medium hover:bg-leaf-green/90 transition-colors shadow-sm text-sm cursor-pointer"
+          >
+            Sluiten
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -1469,6 +1655,8 @@ const FloatingSocials = () => {
 };
 
 export default function App() {
+  const [legalModal, setLegalModal] = useState<'privacy' | 'voorwaarden' | null>(null);
+
   return (
     <div className="min-h-screen font-sans bg-bg-base selection:bg-soft-lavender selection:text-text-dark">
       <Navbar />
@@ -1482,8 +1670,9 @@ export default function App() {
         <FAQ />
         <CTA />
       </main>
-      <Footer />
+      <Footer onOpenLegal={(type) => setLegalModal(type)} />
       <FloatingSocials />
+      <LegalModal activeModal={legalModal} onClose={() => setLegalModal(null)} />
     </div>
   );
 }
