@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle, Calendar, Instagram, ChevronLeft, ChevronRight, Quote, Phone, Mail, AtSign, Sparkles } from 'lucide-react';
+import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle, Calendar, Instagram, ChevronLeft, ChevronRight, Quote, Phone, Mail, AtSign, Sparkles, Inbox, Trash2 } from 'lucide-react';
 import { db, auth, signInAnonymous, handleFirestoreError, OperationType } from './firebase';
 import { collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
 import emailjs from '@emailjs/browser';
@@ -1143,6 +1143,7 @@ const CTA = () => {
     
     setIsSubmitting(true);
     let isSuccess = false;
+    let errorMessage = '';
 
     // 1. Dual save: Firestore backup so messages are safely stored
     try {
@@ -1161,31 +1162,83 @@ const CTA = () => {
       console.warn('Firestore submission notice:', dbErr);
     }
 
-    // 2. EmailJS send
+    // 2. Primary send: Server-side proxy /api/contact to avoid ad-blocker & CORS issues
+    let emailSent = false;
     try {
-      const serviceId = (import.meta as any).env?.VITE_EMAILJS_SERVICE_ID || 'service_fjxk3t7';
-      const templateId = (import.meta as any).env?.VITE_EMAILJS_TEMPLATE_ID || 'template_sc93w6u';
-      const publicKey = (import.meta as any).env?.VITE_EMAILJS_PUBLIC_KEY || '6DAm-rgSiGI9l5MU-';
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          message: formData.message.trim()
+        })
+      });
 
-      if (formRef.current && serviceId && templateId && publicKey) {
-        const result = await emailjs.sendForm(
+      const data = await response.json().catch(() => null);
+      if (response.ok && data?.success) {
+        emailSent = true;
+        isSuccess = true;
+      } else {
+        errorMessage = data?.error || `Server status ${response.status}`;
+      }
+    } catch (proxyErr: any) {
+      console.warn('Proxy /api/contact error, attempting direct client EmailJS fallback:', proxyErr);
+    }
+
+    // 3. Fallback: Direct EmailJS SDK in client if server proxy didn't send
+    if (!emailSent) {
+      try {
+        const serviceId = (import.meta as any).env?.VITE_EMAILJS_SERVICE_ID || 'service_fjxk3t7';
+        const templateId = (import.meta as any).env?.VITE_EMAILJS_TEMPLATE_ID || 'template_sc93w6u';
+        const publicKey = (import.meta as any).env?.VITE_EMAILJS_PUBLIC_KEY || '6DAm-rgSiGI9l5MU-';
+
+        const templateParams = {
+          name: formData.name.trim(),
+          from_name: formData.name.trim(),
+          user_name: formData.name.trim(),
+          email: formData.email.trim(),
+          reply_to: formData.email.trim(),
+          from_email: formData.email.trim(),
+          user_email: formData.email.trim(),
+          phone: formData.phone.trim() || '-',
+          telephone: formData.phone.trim() || '-',
+          message: formData.message.trim(),
+          to_email: 'martin.nieuweadem@gmail.com',
+          to_name: 'Martin',
+          subject: `Nieuw bericht via website van ${formData.name.trim()}`
+        };
+
+        const result = await emailjs.send(
           serviceId,
           templateId,
-          formRef.current,
+          templateParams,
           publicKey
         );
-        console.info('EmailJS send status:', result.status, result.text);
-        isSuccess = true;
+        console.info('EmailJS direct send status:', result.status, result.text);
+        if (result.status === 200) {
+          emailSent = true;
+          isSuccess = true;
+        }
+      } catch (emailErr: any) {
+        console.error('EmailJS direct error details:', emailErr?.text || emailErr?.message || emailErr);
+        if (!errorMessage) {
+          errorMessage = emailErr?.text || emailErr?.message || 'Onbekende EmailJS fout';
+        }
       }
-    } catch (emailErr: any) {
-      console.error('EmailJS error details:', emailErr?.text || emailErr?.message || emailErr);
     }
 
     if (isSuccess) {
       showToast('Bedankt voor je bericht! Ik neem zo spoedig mogelijk contact met je op.', 'success');
       setFormData({ name: '', email: '', phone: '', subject: 'Nieuw bericht via website', message: '' });
     } else {
-      showToast('Er ging iets mis bij het verzenden. Neem gerust direct contact op via WhatsApp of telefonisch.', 'error');
+      showToast(
+        errorMessage 
+          ? `Verzenden mislukt (${errorMessage}). Neem gerust direct contact op via WhatsApp of telefonisch.`
+          : 'Er ging iets mis bij het verzenden. Neem gerust direct contact op via WhatsApp of telefonisch.', 
+        'error'
+      );
     }
     setIsSubmitting(false);
   };
@@ -1320,9 +1373,10 @@ const CTA = () => {
 
 interface FooterProps {
   onOpenLegal: (type: 'privacy' | 'voorwaarden') => void;
+  onOpenMessages: () => void;
 }
 
-const Footer = ({ onOpenLegal }: FooterProps) => {
+const Footer = ({ onOpenLegal, onOpenMessages }: FooterProps) => {
   return (
     <footer className="bg-charcoal text-white py-20 border-t border-charcoal/30">
       <div className="max-w-7xl mx-auto px-6 md:px-12 grid md:grid-cols-4 gap-12">
@@ -1389,7 +1443,7 @@ const Footer = ({ onOpenLegal }: FooterProps) => {
       </div>
       <div className="max-w-7xl mx-auto px-6 md:px-12 mt-20 pt-8 border-t border-white/20 text-white/50 text-sm flex flex-col md:flex-row justify-between items-center">
         <p>&copy; {new Date().getFullYear()} Nieuwe Adem. Alle rechten voorbehouden.</p>
-        <div className="flex space-x-8 mt-6 md:mt-0 items-center">
+        <div className="flex space-x-6 mt-6 md:mt-0 items-center">
           <button 
             onClick={() => onOpenLegal('privacy')} 
             className="hover:text-powder-blue transition-colors cursor-pointer text-left"
@@ -1401,6 +1455,14 @@ const Footer = ({ onOpenLegal }: FooterProps) => {
             className="hover:text-powder-blue transition-colors cursor-pointer text-left"
           >
             Voorwaarden
+          </button>
+          <button 
+            onClick={onOpenMessages} 
+            className="hover:text-powder-blue transition-colors cursor-pointer text-left opacity-70 hover:opacity-100 flex items-center gap-1.5"
+            title="Ingekomen contactberichten bekijken"
+          >
+            <Inbox size={15} />
+            <span>Berichten</span>
           </button>
         </div>
       </div>
@@ -1660,8 +1722,150 @@ const FloatingSocials = () => {
   );
 };
 
+interface Submission {
+  id: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  message?: string;
+  createdAt?: any;
+}
+
+const MessagesModal = ({
+  isOpen,
+  onClose
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) => {
+  const [messages, setMessages] = useState<Submission[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setIsLoading(true);
+    const appId = '57c6bd42-54bc-4e53-b191-aba26ca0d214';
+    const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'submissions');
+    const q = query(colRef, orderBy('createdAt', 'desc'));
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const items = snapshot.docs.map(d => ({
+          id: d.id,
+          ...d.data()
+        })) as Submission[];
+        setMessages(items);
+        setIsLoading(false);
+      },
+      (error) => {
+        console.warn('Submissions snapshot notice:', error);
+        setIsLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [isOpen]);
+
+  const handleDelete = async (id: string) => {
+    try {
+      const appId = '57c6bd42-54bc-4e53-b191-aba26ca0d214';
+      await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'submissions', id));
+    } catch (err) {
+      console.error('Fout bij verwijderen bericht:', err);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 z-[120] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div 
+        className="relative bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-bg-base/50">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-leaf-green/10 text-leaf-green">
+              <Inbox size={22} />
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold text-text-dark">Ingekomen Berichten</h3>
+              <p className="text-xs text-text-dark/50">Veilig opgeslagen via het contactformulier ({messages.length})</p>
+            </div>
+          </div>
+          <button 
+            onClick={onClose}
+            className="p-2 rounded-full hover:bg-gray-200/60 text-text-dark/60 hover:text-text-dark transition-colors cursor-pointer"
+            aria-label="Sluiten"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="p-6 overflow-y-auto space-y-4 max-h-[calc(85vh-90px)]">
+          {isLoading ? (
+            <div className="py-12 text-center text-text-dark/50">
+              <Wind className="animate-spin inline-block mb-3" size={24} />
+              <p>Berichten laden...</p>
+            </div>
+          ) : messages.length === 0 ? (
+            <div className="py-12 text-center text-text-dark/50">
+              <p className="text-base font-medium">Nog geen berichten ontvangen.</p>
+              <p className="text-xs mt-1">Zodra iemand het contactformulier invult, verschijnt het hier direct.</p>
+            </div>
+          ) : (
+            messages.map((msg) => {
+              const dateStr = msg.createdAt?.toDate 
+                ? msg.createdAt.toDate().toLocaleString('nl-NL', { dateStyle: 'medium', timeStyle: 'short' })
+                : 'Zojuist';
+              return (
+                <div key={msg.id} className="p-5 rounded-2xl border border-soft-lavender/40 bg-white shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-start justify-between gap-4 mb-3">
+                    <div>
+                      <h4 className="font-semibold text-text-dark text-base">{msg.name || 'Onbekende afzender'}</h4>
+                      <p className="text-xs text-text-dark/50">{dateStr}</p>
+                    </div>
+                    <button
+                      onClick={() => handleDelete(msg.id)}
+                      className="p-1.5 rounded-lg text-text-dark/30 hover:text-red-500 hover:bg-red-50 transition-colors"
+                      title="Bericht verwijderen"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {msg.email && (
+                      <a 
+                        href={`mailto:${msg.email}`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-powder-blue/10 text-powder-blue hover:bg-powder-blue/20 transition-colors"
+                      >
+                        <Mail size={12} />
+                        {msg.email}
+                      </a>
+                    )}
+                  </div>
+
+                  <div className="bg-bg-base/60 p-3.5 rounded-xl text-sm text-text-dark/80 whitespace-pre-line leading-relaxed">
+                    {msg.message}
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
   const [legalModal, setLegalModal] = useState<'privacy' | 'voorwaarden' | null>(null);
+  const [messagesModalOpen, setMessagesModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen font-sans bg-bg-base selection:bg-soft-lavender selection:text-text-dark">
@@ -1676,9 +1880,10 @@ export default function App() {
         <FAQ />
         <CTA />
       </main>
-      <Footer onOpenLegal={(type) => setLegalModal(type)} />
+      <Footer onOpenLegal={(type) => setLegalModal(type)} onOpenMessages={() => setMessagesModalOpen(true)} />
       <FloatingSocials />
       <LegalModal activeModal={legalModal} onClose={() => setLegalModal(null)} />
+      <MessagesModal isOpen={messagesModalOpen} onClose={() => setMessagesModalOpen(false)} />
     </div>
   );
 }
