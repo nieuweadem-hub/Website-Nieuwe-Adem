@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import fs from "fs";
 import { createServer as createViteServer } from "vite";
 
 async function startServer() {
@@ -8,21 +9,95 @@ async function startServer() {
 
   app.use(express.json());
 
+  // In-memory + persistent cache for calendar feed (15-min TTL) to protect against Google Calendar rate-limiting (429)
+  let cachedCalendarData = "";
+  let lastCalendarFetchTime = 0;
+  const CACHE_TTL_MS = 15 * 60 * 1000;
+  const calendarCachePath = path.join(process.cwd(), "calendar_cache.ics");
+  const FALLBACK_CALENDAR = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Nieuwe Adem//Agenda//NL
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Nieuwe Adem Agenda
+X-WR-TIMEZONE:Europe/Amsterdam
+END:VCALENDAR`;
+
+  try {
+    if (fs.existsSync(calendarCachePath)) {
+      const saved = fs.readFileSync(calendarCachePath, "utf-8");
+      if (saved && saved.includes("BEGIN:VCALENDAR")) {
+        cachedCalendarData = saved;
+        lastCalendarFetchTime = Date.now();
+      }
+    }
+  } catch (initErr) {
+    // Ignore cache load error
+  }
+
   // Proxy endpoint for calendar
   app.get("/api/calendar", async (req, res) => {
+    res.setHeader("Content-Type", "text/calendar; charset=utf-8");
+    const now = Date.now();
+
+    // 1. Return fresh cached data immediately if within TTL
+    if (cachedCalendarData && (now - lastCalendarFetchTime < CACHE_TTL_MS)) {
+      res.setHeader("X-Calendar-Cache", "HIT");
+      return res.send(cachedCalendarData);
+    }
+
+    // 2. Fetch fresh ICS from Google Calendar
     try {
       const icsUrl = 'https://calendar.google.com/calendar/ical/martin.nieuweadem%40gmail.com/public/basic.ics';
-      const response = await fetch(icsUrl);
-      if (!response.ok) {
-        throw new Error(`Google Calendar returned status ${response.status}`);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+      const response = await fetch(icsUrl, {
+        signal: controller.signal,
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+          "Accept": "text/calendar, text/plain, */*"
+        }
+      });
+      clearTimeout(timeoutId);
+
+      if (response.ok) {
+        const text = await response.text();
+        if (text && text.includes("BEGIN:VCALENDAR")) {
+          cachedCalendarData = text;
+          lastCalendarFetchTime = now;
+          try {
+            fs.writeFileSync(calendarCachePath, text, "utf-8");
+          } catch (writeErr) {
+            // Ignore disk cache write errors
+          }
+          res.setHeader("X-Calendar-Cache", "MISS");
+          return res.send(text);
+        }
       }
-      const data = await response.text();
-      res.setHeader("Content-Type", "text/calendar");
-      res.send(data);
-    } catch (error) {
-      console.error("Error proxying calendar request:", error);
-      res.status(500).json({ error: "Failed to fetch calendar data" });
+
+      // If status 429 or any non-200, log as notice and fall back gracefully
+      if (response.status === 429) {
+        console.info("Google Calendar rate-limited (status 429). Serving cached or fallback agenda.");
+      } else {
+        console.info(`Google Calendar status ${response.status}. Serving cached or fallback agenda.`);
+      }
+    } catch (err: any) {
+      console.info("Notice fetching Google Calendar:", err?.name === "AbortError" ? "Fetch timeout" : err?.message);
     }
+
+    // Set cooldown timestamp so subsequent hits don't wait on Google timeouts during rate limit
+    lastCalendarFetchTime = now;
+
+    // 3. Fallback to stale cached data or valid empty calendar structure
+    if (cachedCalendarData) {
+      res.setHeader("X-Calendar-Cache", "STALE");
+      return res.send(cachedCalendarData);
+    }
+
+    cachedCalendarData = FALLBACK_CALENDAR;
+    res.setHeader("X-Calendar-Cache", "FALLBACK");
+    return res.send(FALLBACK_CALENDAR);
   });
 
   // Contact form submission endpoint via EmailJS REST API

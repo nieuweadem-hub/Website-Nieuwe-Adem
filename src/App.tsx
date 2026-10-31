@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle, Calendar, Instagram, ChevronLeft, ChevronRight, Quote, Phone, Mail, AtSign, Sparkles } from 'lucide-react';
+import { Menu, X, Wind, Heart, Brain, ChevronDown, User, Users, MapPin, Clock, MessageCircle, Info, CheckCircle2, XCircle, Instagram, ChevronLeft, ChevronRight, Quote, Phone, Mail, AtSign, Sparkles } from 'lucide-react';
 import { db, auth, signInAnonymous, handleFirestoreError, OperationType } from './firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import emailjs from '@emailjs/browser';
@@ -23,7 +23,6 @@ const Navbar = () => {
     { name: 'Herken jij jezelf?', href: '#reality-journey' },
     { name: 'Wat brengt het jou?', href: '#resultaten' },
     { name: 'Aanbod', href: '#methode' },
-    { name: 'Agenda', href: '#agenda' },
     { name: 'Over Martin', href: '#over' },
     { name: 'FAQ', href: '#faq' },
   ];
@@ -267,10 +266,16 @@ const Hero = () => {
 
 const About = () => {
   return (
-    <section id="over" className="py-32 bg-bg-base">
-      <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center gap-16">
+    <section id="over" className="py-32 relative bg-bg-base overflow-hidden">
+      {/* Clearly visible background image from practice space */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('https://i.ibb.co/Dh8FJpd/IMG-20260515-143335aang.jpg')" }}
+      />
+      <div className="absolute inset-0 bg-bg-base/40 backdrop-blur-[0.5px]" />
+      <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center gap-16 relative z-10">
         <div className="w-full md:w-1/2">
-          <div className="relative rounded-[2rem] overflow-hidden aspect-[4/5] shadow-xl border border-soft-lavender/30">
+          <div className="relative rounded-[2.5rem] overflow-hidden aspect-[4/5] shadow-2xl border-4 border-white/80 bg-white">
             <img 
               src="https://i.ibb.co/ZpffcrHB/Martin1.png" 
               alt="Martin - Ademcoach" 
@@ -282,21 +287,23 @@ const About = () => {
           </div>
         </div>
         <div className="w-full md:w-1/2">
-          <div className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-white/60 border border-powder-blue/40 shadow-lg shadow-powder-blue/10 backdrop-blur-md mb-6">
-            <h2 className="text-powder-blue font-bold tracking-widest uppercase text-xl md:text-3xl drop-shadow-sm text-center">
-              Over <span className="font-light">Martin</span>
-            </h2>
-          </div>
-          <h3 className="text-xl md:text-2xl text-powder-blue/80 font-medium mb-8">
-            Geef je adem de ruimte, geef jezelf rust.
-          </h3>
-          <div className="space-y-6 text-text-dark/80 font-light text-lg leading-relaxed">
-            <p>
-              Ik ben Martin, mijn eigen reis met ademwerk begon vanuit een zoektocht naar een betere balans tussen mijn werk en privéleven. Pas toen ik zelf een verbonden ademhalingssessie ontving, ervaarde ik de werkelijke kracht en helende potentie van de adem. Die ervaring was zo’n eye-opener dat ik besloot het eigen te maken en nadat ik mijn opleiding bij het Ruach ademcentrum had afgerond, deze kennis door gaan geven.
-            </p>
-            <p>
-              Naast mijn werk als gecertificeerd ademcoach ben ik werkzaam als <a href="https://www.sdw.nl/over-sdw/ervaringen/stap-voor-stap-krijgt-michael-zijn-leven-terug" target="_blank" rel="noopener noreferrer" className="underline hover:text-powder-blue transition-colors relative z-10">Persoonlijk Begeleider in de gehandicaptenzorg.</a> Het begeleiden van mensen zit in mijn natuur; ik ben geduldig, rustig en empathisch. Tijdens mijn ademsessies creëer ik een veilige bedding waarin ik werk met zachtheid, lichte aanraking, drukpunten, muziek, geluid en energie.
-            </p>
+          <div className="bg-white/95 backdrop-blur-md p-8 md:p-12 rounded-[2.5rem] shadow-xl border border-white/80">
+            <div className="inline-flex items-center justify-center px-8 py-3 rounded-full bg-white/80 border border-powder-blue/40 shadow-sm mb-6">
+              <h2 className="text-powder-blue font-bold tracking-widest uppercase text-xl md:text-2xl drop-shadow-sm text-center">
+                Over <span className="font-light">Martin</span>
+              </h2>
+            </div>
+            <h3 className="text-xl md:text-2xl text-powder-blue font-medium mb-6">
+              Geef je adem de ruimte, geef jezelf rust.
+            </h3>
+            <div className="space-y-6 text-text-dark/85 font-light text-base md:text-lg leading-relaxed">
+              <p>
+                Ik ben Martin, mijn eigen reis met ademwerk begon vanuit een zoektocht naar een betere balans tussen mijn werk en privéleven. Pas toen ik zelf een verbonden ademhalingssessie ontving, ervaarde ik de werkelijke kracht en helende potentie van de adem. Die ervaring was zo’n eye-opener dat ik besloot het eigen te maken en nadat ik mijn opleiding bij het Ruach ademcentrum had afgerond, deze kennis door gaan geven.
+              </p>
+              <p>
+                Naast mijn werk als gecertificeerd ademcoach ben ik werkzaam als <a href="https://www.sdw.nl/over-sdw/ervaringen/stap-voor-stap-krijgt-michael-zijn-leven-terug" target="_blank" rel="noopener noreferrer" className="underline hover:text-powder-blue transition-colors font-medium">Persoonlijk Begeleider in de gehandicaptenzorg.</a> Het begeleiden van mensen zit in mijn natuur; ik ben geduldig, rustig en empathisch. Tijdens mijn ademsessies creëer ik een veilige bedding waarin ik werk met zachtheid, lichte aanraking, drukpunten, muziek, geluid en energie.
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -310,7 +317,13 @@ const Aanbod = () => {
       id="methode" 
       className="py-32 relative bg-bg-base overflow-hidden"
     >
-      {/* Decorative ambient background elements matching homepage */}
+      {/* Background Image from practice space - clearly visible */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('https://i.ibb.co/R4BBkvQx/IMG-20260515-142622aang.jpg')" }}
+      />
+      <div className="absolute inset-0 bg-bg-base/45 backdrop-blur-[0.5px]" />
+      {/* Decorative ambient background elements */}
       <div className="absolute top-[-10%] right-[-5%] w-[45vw] h-[45vw] rounded-full bg-powder-blue/20 blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-[-10%] left-[-5%] w-[45vw] h-[45vw] rounded-full bg-soft-lavender/30 blur-[120px] pointer-events-none"></div>
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
@@ -341,6 +354,8 @@ const Aanbod = () => {
                 { icon: <MessageCircle size={18} />, text: "+ intakegesprek" }
               ],
               buttonText: "Neem contact op",
+              buttonHref: "#contact-form",
+              isExternal: false,
               popular: false
             },
             {
@@ -353,11 +368,24 @@ const Aanbod = () => {
                 { icon: <MessageCircle size={18} />, text: "+ intakegesprek & opvolging" }
               ],
               buttonText: "Neem contact op",
+              buttonHref: "#contact-form",
+              isExternal: false,
               popular: false
             },
             {
               title: "Ademcirkel",
-              price: <div className="flex items-center justify-center h-[84px]">Zie agenda</div>,
+              price: (
+                <div className="flex items-center justify-center h-[84px]">
+                  <a 
+                    href="https://hipsy.nl/nieuwe-adem" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-2xl md:text-3xl text-leaf-green hover:underline font-semibold transition-colors"
+                  >
+                    Zie Hipsy!
+                  </a>
+                </div>
+              ),
               priceSubtext: undefined,
               details: [
                 { icon: <Users size={18} />, text: "Groepssessie (kleine of grote groep)" },
@@ -365,7 +393,9 @@ const Aanbod = () => {
                 { icon: <Clock size={18} />, text: "Tijd: ca 120 min" },
                 { icon: <Info size={18} />, text: "Verbonden ademen in veilige bedding" }
               ],
-              buttonText: "Bekijk agenda",
+              buttonText: "Zie Hipsy!",
+              buttonHref: "https://hipsy.nl/nieuwe-adem",
+              isExternal: true,
               popular: false
             }
           ].map((item, i) => (
@@ -399,15 +429,13 @@ const Aanbod = () => {
               </ul>
               
               <a 
-                href={item.buttonText.includes("agenda") || item.buttonText.includes("Agenda") ? "#agenda" : "#contact-form"}
-                onClick={(e) => {
+                href={item.buttonHref || "#contact-form"}
+                target={item.isExternal ? "_blank" : undefined}
+                rel={item.isExternal ? "noopener noreferrer" : undefined}
+                onClick={!item.isExternal ? (e) => {
                   e.preventDefault();
-                  if (item.buttonText.includes("agenda") || item.buttonText.includes("Agenda")) {
-                    document.getElementById('agenda')?.scrollIntoView({ behavior: 'smooth' });
-                  } else {
-                    document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
+                  document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
+                } : undefined}
                 className="w-full py-4 rounded-full font-medium transition-colors shadow-sm text-center block bg-leaf-green text-white hover:bg-leaf-green/90"
               >
                 {item.buttonText}
@@ -504,7 +532,13 @@ const Benefits = () => {
 
   return (
     <section id="resultaten" className="py-32 relative bg-bg-base overflow-hidden">
-      {/* Decorative ambient background elements matching homepage */}
+      {/* Background Image from practice space - clearly visible */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('https://i.ibb.co/wNhXLLSw/IMG-20260515-142957aang.jpg')" }}
+      />
+      <div className="absolute inset-0 bg-bg-base/40 backdrop-blur-[0.5px]" />
+      {/* Decorative ambient background elements */}
       <div className="absolute top-1/4 right-[-5%] w-[45vw] h-[45vw] rounded-full bg-soft-lavender/30 blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-1/4 left-[-5%] w-[45vw] h-[45vw] rounded-full bg-powder-blue/20 blur-[120px] pointer-events-none"></div>
       
@@ -714,316 +748,7 @@ const Benefits = () => {
   );
 };
 
-interface CalendarEvent {
-  id: string;
-  title: string;
-  start: Date;
-  end: Date;
-  description?: string;
-  location?: string;
-}
 
-const parseICSDate = (dateStr: string): Date => {
-  const year = parseInt(dateStr.substring(0, 4));
-  const month = parseInt(dateStr.substring(4, 6)) - 1;
-  const day = parseInt(dateStr.substring(6, 8));
-  
-  if (dateStr.length > 8) {
-    const hour = parseInt(dateStr.substring(9, 11));
-    const minute = parseInt(dateStr.substring(11, 13));
-    const second = parseInt(dateStr.substring(13, 15));
-    if (dateStr.endsWith('Z')) {
-      return new Date(Date.UTC(year, month, day, hour, minute, second));
-    }
-    return new Date(year, month, day, hour, minute, second);
-  }
-  
-  return new Date(year, month, day);
-};
-
-const parseICS = (icsData: string): CalendarEvent[] => {
-  const events: CalendarEvent[] = [];
-  const unfoldedData = icsData.replace(/\r?\n[ \t]/g, '');
-  const lines = unfoldedData.split(/\r?\n/);
-  
-  let currentEvent: Partial<CalendarEvent> | null = null;
-  
-  for (const line of lines) {
-    if (line.startsWith('BEGIN:VEVENT')) {
-      currentEvent = {};
-    } else if (line.startsWith('END:VEVENT')) {
-      if (currentEvent && currentEvent.start && currentEvent.title) {
-        events.push(currentEvent as CalendarEvent);
-      }
-      currentEvent = null;
-    } else if (currentEvent) {
-      const colonIdx = line.indexOf(':');
-      if (colonIdx === -1) continue;
-      const key = line.substring(0, colonIdx);
-      const value = line.substring(colonIdx + 1);
-      
-      if (key === 'SUMMARY') {
-        currentEvent.title = value.replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\n/g, '\n');
-      } else if (key.startsWith('DTSTART')) {
-        currentEvent.start = parseICSDate(value);
-      } else if (key.startsWith('DTEND')) {
-        currentEvent.end = parseICSDate(value);
-      } else if (key === 'DESCRIPTION') {
-        const decoded = value.replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\n/g, '\n');
-        currentEvent.description = decoded.replace(/<[^>]*>?/gm, '');
-      } else if (key === 'LOCATION') {
-        currentEvent.location = value.replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\n/g, '\n');
-      } else if (key === 'UID') {
-        currentEvent.id = value;
-      }
-    }
-  }
-  
-  return events.sort((a, b) => a.start.getTime() - b.start.getTime());
-};
-
-const renderTextWithLinks = (text: string) => {
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  const parts = text.split(urlRegex);
-  return parts.map((part, i) => {
-    if (part.match(urlRegex)) {
-      return (
-        <a 
-          key={i} 
-          href={part} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="text-ocean-blue hover:text-powder-blue underline transition-colors"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {part}
-        </a>
-      );
-    }
-    return <span key={i}>{part}</span>;
-  });
-};
-
-const Agenda = () => {
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        let data = '';
-        let success = false;
-
-        // 1. Try local backend proxy first (ideal for full-stack build/Cloud Run)
-        try {
-          const response = await fetch('/api/calendar');
-          if (response.ok) {
-            const text = await response.text();
-            if (text.includes('BEGIN:VCALENDAR')) {
-              data = text;
-              success = true;
-            }
-          }
-        } catch (localError) {
-          console.warn('Backend proxy not reachable or failed, falling back to public CORS proxies:', localError);
-        }
-
-        // 2. Fallback to public client-side CORS proxies if backend proxy did not succeed
-        if (!success) {
-          const icsUrl = 'https://calendar.google.com/calendar/ical/martin.nieuweadem%40gmail.com/public/basic.ics';
-          const proxies = [
-            {
-              url: `https://corsproxy.io/?${encodeURIComponent(icsUrl)}`,
-              isJson: false
-            },
-            {
-              url: `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(icsUrl)}`,
-              isJson: false
-            },
-            {
-              url: `https://api.allorigins.win/get?url=${encodeURIComponent(icsUrl)}`,
-              isJson: true
-            }
-          ];
-
-          const fetchWithTimeout = async (url: string, timeout = 6000) => {
-            const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), timeout);
-            try {
-              const response = await fetch(url, { signal: controller.signal });
-              clearTimeout(id);
-              return response;
-            } catch (error) {
-              clearTimeout(id);
-              throw error;
-            }
-          };
-
-          for (const proxy of proxies) {
-            try {
-              const response = await fetchWithTimeout(proxy.url);
-              if (response.ok) {
-                const text = await response.text();
-                if (proxy.isJson) {
-                  try {
-                    const json = JSON.parse(text);
-                    if (json.contents && json.contents.includes('BEGIN:VCALENDAR')) {
-                      data = json.contents;
-                      success = true;
-                      break;
-                    }
-                  } catch (jsonError) {
-                    // Ignore JSON parsing error and try the next proxy
-                  }
-                } else {
-                  if (text.includes('BEGIN:VCALENDAR')) {
-                    data = text;
-                    success = true;
-                    break;
-                  }
-                }
-              }
-            } catch (proxyError) {
-              console.warn(`Proxy failed: ${proxy.url}`, proxyError);
-            }
-          }
-        }
-
-        if (!success || !data) {
-          throw new Error('All calendar fetch attempts failed.');
-        }
-        
-        const parsedEvents = parseICS(data);
-        const now = new Date();
-        now.setHours(0, 0, 0, 0);
-        const upcomingEvents = parsedEvents.filter(e => e.start >= now).slice(0, 6);
-        
-        setEvents(upcomingEvents);
-      } catch (err) {
-        console.error('Error fetching calendar:', err);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEvents();
-  }, []);
-
-  return (
-    <section 
-      id="agenda" 
-      className="py-32 relative bg-bg-base overflow-hidden"
-    >
-      {/* Decorative ambient background elements matching homepage */}
-      <div className="absolute top-[-10%] right-[-5%] w-[45vw] h-[45vw] rounded-full bg-soft-lavender/30 blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] left-[-5%] w-[45vw] h-[45vw] rounded-full bg-powder-blue/20 blur-[120px] pointer-events-none"></div>
-      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
-          <div className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-white/60 border border-powder-blue/40 shadow-lg shadow-powder-blue/10 backdrop-blur-md mb-6">
-            <h2 className="text-powder-blue font-bold tracking-widest uppercase text-xl md:text-3xl drop-shadow-sm text-center">
-              Agenda
-            </h2>
-          </div>
-          <p className="text-lg md:text-xl text-text-dark/80 font-light max-w-2xl mx-auto mt-2">
-            Bekijk de planning voor aankomende ademcirkels en evenementen.
-          </p>
-        </motion.div>
-
-        <div className="relative max-w-5xl mx-auto">
-          {loading ? (
-            <div className="bg-white/80 backdrop-blur-md rounded-[2rem] p-12 text-center shadow-sm border border-white">
-              <div className="animate-spin w-10 h-10 border-4 border-leaf-green border-t-transparent rounded-full mx-auto mb-4"></div>
-              <p className="text-text-dark/70 font-medium tracking-wide">Agenda laden...</p>
-            </div>
-          ) : error ? (
-            <div className="bg-white/80 backdrop-blur-md rounded-[2rem] p-16 text-center shadow-sm border border-white">
-              <Calendar className="w-16 h-16 text-leaf-green mx-auto mb-6 opacity-80" />
-              <p className="text-xl text-text-dark font-medium mb-3">Er konden momenteel geen afspraken worden geladen.</p>
-              <p className="text-lg text-text-dark/60 font-light">
-                (Soms blokkeren ad-blockers het inladen van de kalender data). Neem direct contact op voor de actuele beschikbaarheid.
-              </p>
-              <a 
-                href="#contact-form"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="inline-block mt-8 px-8 py-3 bg-leaf-green text-white rounded-full font-medium shadow-sm hover:bg-leaf-green/90 transition-colors"
-              >
-                Neem contact op
-              </a>
-            </div>
-          ) : events.length === 0 ? (
-            <div className="bg-white/80 backdrop-blur-md rounded-[2rem] p-16 text-center shadow-sm border border-white">
-              <Calendar className="w-16 h-16 text-leaf-green mx-auto mb-6 opacity-80" />
-              <p className="text-xl text-text-dark font-medium mb-3">Er staan momenteel geen openbare groepsessies gepland.</p>
-              <p className="text-lg text-text-dark/60 font-light">
-                Mocht je interesse hebben in een 1-op-1 sessie of zelf een groep vormen, neem dan contact op!
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {events.map((event, index) => (
-                <motion.div 
-                  key={event.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1, duration: 0.6 }}
-                  className="group bg-white/95 backdrop-blur-md rounded-[2rem] p-8 shadow-sm hover:shadow-xl border border-soft-lavender/40 hover:border-powder-blue/40 transition-all duration-300 hover:-translate-y-1 flex gap-6"
-                >
-                  <div className="flex-shrink-0 bg-soft-lavender/30 text-ocean-blue rounded-2xl w-24 h-24 flex flex-col items-center justify-center p-2 group-hover:bg-powder-blue group-hover:text-white transition-colors duration-300 shadow-sm">
-                    <span className="block text-sm font-bold uppercase tracking-widest mb-1">
-                      {event.start.toLocaleDateString('nl-NL', { month: 'short' })}
-                    </span>
-                    <span className="block text-4xl font-light leading-none">
-                      {event.start.getDate()}
-                    </span>
-                  </div>
-                  
-                  <div className="flex-grow flex flex-col justify-between">
-                    <div>
-                      <h3 className="text-xl font-medium text-text-dark mb-4 leading-tight group-hover:text-ocean-blue transition-colors">{event.title}</h3>
-                      <div className="flex flex-col gap-2.5 text-sm md:text-base text-text-dark/70 font-light">
-                        <div className="flex items-center gap-3">
-                          <Clock size={18} className="text-leaf-green flex-shrink-0" />
-                          <span>
-                            {event.start.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })} - {event.end.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
-                          </span>
-                        </div>
-                        {event.location && (
-                          <div className="flex flex-start gap-3">
-                            <MapPin size={18} className="text-leaf-green flex-shrink-0 mt-0.5" />
-                            <span className="leading-snug">{event.location}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    {event.description && (
-                      <div className="mt-5 pt-5 border-t border-soft-lavender/30">
-                        <p className="text-sm text-text-dark/60 line-clamp-3 leading-relaxed">
-                          {renderTextWithLinks(event.description)}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </section>
-  );
-};
 
 const FAQ = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -1064,7 +789,13 @@ const FAQ = () => {
       id="faq" 
       className="py-32 relative bg-bg-base overflow-hidden"
     >
-      {/* Decorative ambient background elements matching homepage */}
+      {/* Background Image from practice space - clearly visible */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('https://i.ibb.co/cXTj6JZs/IMG-20260515-143343aang.jpg')" }}
+      />
+      <div className="absolute inset-0 bg-bg-base/45 backdrop-blur-[0.5px]" />
+      {/* Decorative ambient background elements */}
       <div className="absolute top-[-10%] left-[-5%] w-[45vw] h-[45vw] rounded-full bg-powder-blue/20 blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-[-10%] right-[-5%] w-[45vw] h-[45vw] rounded-full bg-soft-lavender/30 blur-[120px] pointer-events-none"></div>
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
@@ -1253,7 +984,13 @@ const CTA = () => {
       id="contact" 
       className="py-32 relative bg-bg-base overflow-hidden"
     >
-      {/* Decorative ambient background elements matching homepage */}
+      {/* Background Image from practice space - clearly visible */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('https://i.ibb.co/hJs4W3S7/IMG-20260515-145604aang.jpg')" }}
+      />
+      <div className="absolute inset-0 bg-bg-base/45 backdrop-blur-[0.5px]" />
+      {/* Decorative ambient background elements */}
       <div className="absolute top-1/4 right-[-5%] w-[45vw] h-[45vw] rounded-full bg-soft-lavender/30 blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-1/4 left-[-5%] w-[45vw] h-[45vw] rounded-full bg-powder-blue/20 blur-[120px] pointer-events-none"></div>
 
@@ -1424,7 +1161,6 @@ const Footer = ({ onOpenLegal }: FooterProps) => {
             <li><a href="#reality-journey" className="hover:text-powder-blue transition-colors">Herken jij jezelf?</a></li>
             <li><a href="#resultaten" className="hover:text-powder-blue transition-colors">Wat brengt het jou?</a></li>
             <li><a href="#methode" className="hover:text-powder-blue transition-colors">Aanbod</a></li>
-            <li><a href="#agenda" className="hover:text-powder-blue transition-colors">Agenda</a></li>
             <li><a href="#over" className="hover:text-powder-blue transition-colors">Over Martin</a></li>
             <li><a href="#faq" className="hover:text-powder-blue transition-colors">FAQ</a></li>
           </ul>
@@ -1618,7 +1354,13 @@ const RealityJourney = () => {
 
   return (
     <section className="py-20 relative bg-bg-base overflow-hidden" id="reality-journey">
-      {/* Decorative ambient background elements matching homepage */}
+      {/* Background Image from practice space - clearly visible */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('https://i.ibb.co/chNDxFPF/IMG-20260515-142939aang.jpg')" }}
+      />
+      <div className="absolute inset-0 bg-bg-base/40 backdrop-blur-[0.5px]" />
+      {/* Decorative ambient background elements */}
       <div className="absolute top-1/2 left-[-10%] w-[45vw] h-[45vw] -translate-y-1/2 rounded-full bg-soft-lavender/30 blur-[100px] pointer-events-none"></div>
       <div className="absolute bottom-[-10%] right-[-5%] w-[40vw] h-[40vw] rounded-full bg-powder-blue/20 blur-[120px] pointer-events-none"></div>
       
@@ -1828,7 +1570,6 @@ export default function App() {
         <RealityJourney />
         <Benefits />
         <Aanbod />
-        <Agenda />
         <About />
         <FAQ />
         <CTA />
