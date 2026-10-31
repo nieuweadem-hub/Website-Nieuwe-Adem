@@ -1195,6 +1195,8 @@ const CTA = () => {
         name: formData.name.trim(),
         to_name: formData.name.trim(),
         to_email: formData.email.trim(),
+        email: formData.email.trim(), // Zorgt dat ook {{email}} in EmailJS template 2 werkt
+        customer_email: formData.email.trim(),
         from_name: 'Martin | Nieuwe Adem',
         from_email: 'martin.nieuweadem@gmail.com',
         reply_to: 'martin.nieuweadem@gmail.com',
