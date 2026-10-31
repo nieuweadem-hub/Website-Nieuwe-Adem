@@ -1123,6 +1123,8 @@ const CTA = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', subject: 'Nieuw bericht via website', message: '' });
+  const isSubmittingRef = useRef(false);
+  const lastSubmitTimestampRef = useRef(0);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -1143,8 +1145,15 @@ const CTA = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const now = Date.now();
+    // Strikt beveiligd tegen dubbele verzending: synchrone lock + minimaal 4 sec cooldown
+    if (isSubmittingRef.current || isSubmitting || (now - lastSubmitTimestampRef.current < 4000)) {
+      return;
+    }
     if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) return;
     
+    isSubmittingRef.current = true;
+    lastSubmitTimestampRef.current = now;
     setIsSubmitting(true);
     let isSuccess = false;
     let errorMessage = '';
@@ -1166,7 +1175,7 @@ const CTA = () => {
       console.warn('Firestore submission notice:', dbErr);
     }
 
-    // 2. EmailJS browser send: verstuur beide templates gelijktijdig via Promise.all
+    // 2. EmailJS browser send: verstuur beide templates na elkaar (sequentieel voor maximale stabiliteit)
     try {
       const SERVICE_ID = 'service_fjxk3t7';
       const TEMPLATE_OWNER_ID = 'template_sc93w6u';
@@ -1195,7 +1204,7 @@ const CTA = () => {
         name: formData.name.trim(),
         to_name: formData.name.trim(),
         to_email: formData.email.trim(),
-        email: formData.email.trim(), // Zorgt dat ook {{email}} in EmailJS template 2 werkt
+        email: formData.email.trim(),
         customer_email: formData.email.trim(),
         from_name: 'Martin | Nieuwe Adem',
         from_email: 'martin.nieuweadem@gmail.com',
@@ -1208,15 +1217,14 @@ const CTA = () => {
         subject: 'Bevestiging van je bericht - Nieuwe Adem'
       };
 
-      const [ownerRes, customerRes] = await Promise.all([
-        emailjs.send(SERVICE_ID, TEMPLATE_OWNER_ID, ownerParams, PUBLIC_KEY),
-        emailjs.send(SERVICE_ID, TEMPLATE_CUSTOMER_ID, customerParams, PUBLIC_KEY)
-      ]);
+      // Stap 1: Verstuur notificatie naar Martin (slechts 1x)
+      const ownerRes = await emailjs.send(SERVICE_ID, TEMPLATE_OWNER_ID, ownerParams, PUBLIC_KEY);
+      console.info('EmailJS: Notificatie naar eigenaar verstuurd:', ownerRes.status);
 
-      console.info('EmailJS verzending geslaagd:', {
-        owner: ownerRes.status,
-        customer: customerRes.status
-      });
+      // Stap 2: Verstuur bevestiging naar klant (slechts 1x)
+      const customerRes = await emailjs.send(SERVICE_ID, TEMPLATE_CUSTOMER_ID, customerParams, PUBLIC_KEY);
+      console.info('EmailJS: Bevestiging naar klant verstuurd:', customerRes.status);
+
       isSuccess = true;
     } catch (emailErr: any) {
       console.error('EmailJS direct error details:', emailErr?.text || emailErr?.message || emailErr);
@@ -1237,6 +1245,7 @@ const CTA = () => {
       );
     }
     setIsSubmitting(false);
+    isSubmittingRef.current = false;
   };
 
   return (
